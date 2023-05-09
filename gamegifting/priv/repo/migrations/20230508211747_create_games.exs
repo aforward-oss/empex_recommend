@@ -8,6 +8,7 @@ defmodule Gamegifting.Repo.Migrations.CreateGames do
       add :date_released, :date
       add :genre, :string
       add :difficulty, :integer
+      add :rating, :integer
 
       timestamps()
     end
@@ -16,5 +17,6 @@ defmodule Gamegifting.Repo.Migrations.CreateGames do
     create index(:games, [:system_name])
     create index(:games, [:genre])
     create index(:games, [:difficulty])
+    create index(:games, [:rating])
   end
 end

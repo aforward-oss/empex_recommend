@@ -9,7 +9,9 @@ defmodule Gamegifting.Models.GameTest do
         name: "Flappybirds",
         system_name: "WooES",
         date_released: ~D[2023-05-08],
-        genre: "FPS"
+        genre: "FPS",
+        difficulty: 4,
+        rating: 8
       })
 
       p = Game.find("Flappybirds")
@@ -18,6 +20,8 @@ defmodule Gamegifting.Models.GameTest do
       assert p.system_name == "WooES"
       assert p.date_released == ~D[2023-05-08]
       assert p.genre == "FPS"
+      assert p.difficulty == 4
+      assert p.rating == 8
     end
 
     test "default values" do
@@ -28,6 +32,8 @@ defmodule Gamegifting.Models.GameTest do
       assert p.system_name == nil
       assert p.date_released == nil
       assert p.genre == nil
+      assert p.difficulty == nil
+      assert p.rating == nil
     end
 
     test "update if existing" do
@@ -36,7 +42,9 @@ defmodule Gamegifting.Models.GameTest do
           name: "Flappybirds",
           system_name: "WooES",
           date_released: ~D[2023-05-08],
-          genre: "FPS"
+          genre: "FPS",
+          difficulty: 3,
+          rating: 7
         })
 
       same_a =
@@ -44,7 +52,9 @@ defmodule Gamegifting.Models.GameTest do
           name: "Flappybirds",
           system_name: "SuperWooES",
           date_released: ~D[2023-05-07],
-          genre: "2PS"
+          genre: "2PS",
+          difficulty: 4,
+          rating: 8
         })
 
       lookup_a = Game.find("Flappybirds")
@@ -53,6 +63,8 @@ defmodule Gamegifting.Models.GameTest do
       assert lookup_a.system_name == "SuperWooES"
       assert lookup_a.date_released == ~D[2023-05-07]
       assert lookup_a.genre == "2PS"
+      assert lookup_a.difficulty == 4
+      assert lookup_a.rating == 8
 
       assert same_a.id == a.id
       assert lookup_a.id == a.id

@@ -12,11 +12,12 @@ defmodule Gamegifting.Models.Game do
     field :date_released, :date
     field :genre, :string
     field :difficulty, :integer
+    field :rating, :integer
 
     timestamps()
   end
 
-  @fields [:name, :system_name, :date_released, :genre, :difficulty]
+  @fields [:name, :system_name, :date_released, :genre, :difficulty, :rating]
 
   def changeset(struct, params \\ %{}) do
     struct
