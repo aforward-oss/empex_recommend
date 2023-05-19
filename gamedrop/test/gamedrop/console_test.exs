@@ -57,6 +57,34 @@ defmodule Gamedrop.Models.ConsoleTest do
       assert same_a.id == a.id
       assert lookup_a.id == a.id
     end
+
+    test "update string params" do
+      a =
+        Console.upsert(%{
+          company_name: "Woo",
+          console_name: "WooES",
+          date_released: ~D[2023-05-08],
+          company_website: "https://woo.local"
+        })
+
+      same_a =
+        Console.upsert(%{
+          "company_name" => "Woo Inc",
+          "console_name" => "WooES",
+          "date_released" => ~D[2023-05-07],
+          "company_website" => "https://wooinc.local"
+        })
+
+      lookup_a = Console.find("WooES")
+
+      assert lookup_a.company_name == "Woo Inc"
+      assert lookup_a.console_name == "WooES"
+      assert lookup_a.date_released == ~D[2023-05-07]
+      assert lookup_a.company_website == "https://wooinc.local"
+
+      assert same_a.id == a.id
+      assert lookup_a.id == a.id
+    end
   end
 
   describe "all" do

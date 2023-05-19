@@ -48,7 +48,7 @@ defmodule Gamedrop.Models.Console do
   end
 
   def upsert(params) do
-    case find(params[:console_name]) do
+    case find(params[:console_name] || params["console_name"]) do
       nil -> add(params)
       found -> update(found, params)
     end
