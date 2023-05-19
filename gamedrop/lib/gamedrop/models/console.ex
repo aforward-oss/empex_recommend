@@ -31,6 +31,10 @@ defmodule Gamedrop.Models.Console do
     |> Repo.all()
   end
 
+  def by_id(id) do
+    Repo.get_by(Model, id: id)
+  end
+
   def find(name) do
     Repo.get_by(Model, console_name: name)
   end

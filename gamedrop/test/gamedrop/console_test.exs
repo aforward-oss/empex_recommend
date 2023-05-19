@@ -98,4 +98,15 @@ defmodule Gamedrop.Models.ConsoleTest do
       assert ["NES", "WooES"] == Console.all() |> Enum.map(fn t -> t.console_name end)
     end
   end
+
+  describe "by_id" do
+    test "not found" do
+      assert nil == Console.by_id(-1)
+    end
+
+    test "found" do
+      c = Console.upsert(%{console_name: "WooES"})
+      assert c == Console.by_id(c.id)
+    end
+  end
 end
