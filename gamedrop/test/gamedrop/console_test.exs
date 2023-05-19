@@ -8,7 +8,7 @@ defmodule Gamedrop.Models.ConsoleTest do
       Console.upsert(%{
         company_name: "Woo",
         console_name: "WooES",
-        date_released: ~D[2023-05-08],
+        release_date: ~D[2023-05-08],
         company_website: "https://woo.local"
       })
 
@@ -16,7 +16,7 @@ defmodule Gamedrop.Models.ConsoleTest do
 
       assert p.company_name == "Woo"
       assert p.console_name == "WooES"
-      assert p.date_released == ~D[2023-05-08]
+      assert p.release_date == ~D[2023-05-08]
       assert p.company_website == "https://woo.local"
     end
 
@@ -26,7 +26,7 @@ defmodule Gamedrop.Models.ConsoleTest do
 
       assert p.company_name == nil
       assert p.console_name == "NES"
-      assert p.date_released == nil
+      assert p.release_date == nil
       assert p.company_website == nil
     end
 
@@ -35,7 +35,7 @@ defmodule Gamedrop.Models.ConsoleTest do
         Console.upsert(%{
           company_name: "Woo",
           console_name: "WooES",
-          date_released: ~D[2023-05-08],
+          release_date: ~D[2023-05-08],
           company_website: "https://woo.local"
         })
 
@@ -43,7 +43,7 @@ defmodule Gamedrop.Models.ConsoleTest do
         Console.upsert(%{
           company_name: "Woo Inc",
           console_name: "WooES",
-          date_released: ~D[2023-05-07],
+          release_date: ~D[2023-05-07],
           company_website: "https://wooinc.local"
         })
 
@@ -51,7 +51,7 @@ defmodule Gamedrop.Models.ConsoleTest do
 
       assert lookup_a.company_name == "Woo Inc"
       assert lookup_a.console_name == "WooES"
-      assert lookup_a.date_released == ~D[2023-05-07]
+      assert lookup_a.release_date == ~D[2023-05-07]
       assert lookup_a.company_website == "https://wooinc.local"
 
       assert same_a.id == a.id
@@ -63,7 +63,7 @@ defmodule Gamedrop.Models.ConsoleTest do
         Console.upsert(%{
           company_name: "Woo",
           console_name: "WooES",
-          date_released: ~D[2023-05-08],
+          release_date: ~D[2023-05-08],
           company_website: "https://woo.local"
         })
 
@@ -71,7 +71,7 @@ defmodule Gamedrop.Models.ConsoleTest do
         Console.upsert(%{
           "company_name" => "Woo Inc",
           "console_name" => "WooES",
-          "date_released" => ~D[2023-05-07],
+          "release_date" => ~D[2023-05-07],
           "company_website" => "https://wooinc.local"
         })
 
@@ -79,7 +79,7 @@ defmodule Gamedrop.Models.ConsoleTest do
 
       assert lookup_a.company_name == "Woo Inc"
       assert lookup_a.console_name == "WooES"
-      assert lookup_a.date_released == ~D[2023-05-07]
+      assert lookup_a.release_date == ~D[2023-05-07]
       assert lookup_a.company_website == "https://wooinc.local"
 
       assert same_a.id == a.id

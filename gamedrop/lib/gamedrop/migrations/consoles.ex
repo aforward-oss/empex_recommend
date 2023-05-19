@@ -13,7 +13,7 @@ defmodule Gamedrop.Migrations.Consoles do
 
     Repo.run_sql("""
     INSERT INTO consoles
-    (console_name, date_released, company_website, company_name, inserted_at, updated_at)
+    (console_name, release_date, company_website, company_name, inserted_at, updated_at)
     VALUES
     ('Atari 2600', '1977-09-11', 'https://www.atari.com', 'Atari', NOW(), NOW()),
     ('ColecoVision', '1982-08-01', 'http://www.coleco.com/', 'Coleco', NOW(), NOW()),

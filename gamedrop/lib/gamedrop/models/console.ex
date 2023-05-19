@@ -9,13 +9,13 @@ defmodule Gamedrop.Models.Console do
   schema "consoles" do
     field :company_name, :string
     field :console_name, :string
-    field :date_released, :date
+    field :release_date, :date
     field :company_website, :string
 
     timestamps()
   end
 
-  @fields [:company_name, :console_name, :date_released, :company_website]
+  @fields [:company_name, :console_name, :release_date, :company_website]
 
   def changeset(struct, params \\ %{}) do
     struct

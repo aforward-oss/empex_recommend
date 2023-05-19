@@ -5,7 +5,7 @@ defmodule Gamedrop.Repo.Migrations.CreateConsoles do
     create table(:consoles) do
       add :company_name, :string
       add :console_name, :string
-      add :date_released, :date
+      add :release_date, :date
       add :company_website, :string
       timestamps()
     end
