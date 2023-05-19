@@ -99,6 +99,55 @@ defmodule Gamedrop.Models.GameTest do
       assert same_a.id == a.id
       assert lookup_a.id == a.id
     end
+
+    test "update based on binary params" do
+      a =
+        Game.upsert(%{
+          game_name: "Flappybirds",
+          console_name: "WooES",
+          release_date: ~D[2023-05-08],
+          genre: "FPS",
+          difficulty: 3,
+          gameplay_rating: 7,
+          developer: "XBirds",
+          maturity_rating: "PG14",
+          multiplayer: false,
+          player_mode: "Multiple",
+          description: "I love burgers"
+        })
+
+      same_a =
+        Game.upsert(%{
+          "game_name" => "Flappybirds",
+          "console_name" => "SuperWooES",
+          "release_date" => ~D[2023-05-07],
+          "genre" => "2PS",
+          "difficulty" => 4,
+          "gameplay_rating" => 8,
+          "developer" => "FBirds",
+          "maturity_rating" => "PG13",
+          "multiplayer" => true,
+          "player_mode" => "Single",
+          "description" => "I love cheese"
+        })
+
+      lookup_a = Game.find("Flappybirds")
+
+      assert lookup_a.game_name == "Flappybirds"
+      assert lookup_a.console_name == "SuperWooES"
+      assert lookup_a.release_date == ~D[2023-05-07]
+      assert lookup_a.genre == "2PS"
+      assert lookup_a.difficulty == 4
+      assert lookup_a.gameplay_rating == 8
+      assert lookup_a.developer == "FBirds"
+      assert lookup_a.maturity_rating == "PG13"
+      assert lookup_a.multiplayer == true
+      assert lookup_a.player_mode == "Single"
+      assert lookup_a.description == "I love cheese"
+
+      assert same_a.id == a.id
+      assert lookup_a.id == a.id
+    end
   end
 
   describe "all" do

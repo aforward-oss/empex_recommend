@@ -50,6 +50,15 @@ defmodule Gamedrop.Models.Game do
     |> Repo.all()
   end
 
+  def all_for_console(console) do
+    from(
+      t in Model,
+      where: t.console_name == ^console.console_name,
+      order_by: t.game_name
+    )
+    |> Repo.all()
+  end
+
   def find(game_name) do
     Repo.get_by(Model, game_name: game_name)
   end
@@ -67,7 +76,7 @@ defmodule Gamedrop.Models.Game do
   end
 
   def upsert(params) do
-    case find(params[:game_name]) do
+    case find(params[:game_name] || params["game_name"]) do
       nil -> add(params)
       found -> update(found, params)
     end
