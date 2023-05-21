@@ -1,0 +1,95 @@
+# Deploying a Model
+
+```elixir
+Mix.install([
+  {:scholar, "~> 0.1"},
+  {:nx, "~> 0.5"},
+  {:axon, "~> 0.5"}
+])
+```
+
+## Data
+
+We are going to run a simple experiment to extrapolate the formula `z = 2x - 3y + 5`
+based on a a few points on the graph.
+
+```elixir
+data =
+  Nx.tensor([
+    [1, 1, 4],
+    [1, 2, 1],
+    [1, 3, -2],
+    [2, 1, 6],
+    [3, 1, 8],
+    [4, 1, 10],
+    [6, 2, 11],
+    [7, 6, 1],
+    [8, 2, 15]
+  ])
+```
+
+## Features and Labels
+
+As good as our data is, we still will need to extract our model into features, this next step will be dependent on the shape of your model.
+
+```elixir
+features = data[[.., 0..1]]
+label = data[[.., 2]]
+
+{features, label}
+```
+
+## Train Data
+
+Now we can use Scholar to run a linear regression on the data.
+
+```elixir
+alias Scholar.Linear.LinearRegression, as: LR
+model = LR.fit(features, label)
+```
+
+## (Manual) Evaluation of the Data
+
+As this was a simple model, we will just run a few manual tests, but the outputs look very accurate with a predicted model of z = 1.99x - 2.99y + 5.02
+
+```elixir
+for [x, y] <- [[0, 0], [5, 5], [10, 10]] do
+  answer = LR.predict(model, Nx.tensor([x, y])) |> Nx.to_number() |> Float.round(2)
+  IO.puts("x #{x} and y #{y} => #{answer}")
+  answer
+end
+```
+
+## Save The Model
+
+Great, so now we want to save this model for re-use.  For that, we reach into Axom (I hope).
+
+```elixir
+model
+|> Nx.serialize()
+|> then(&File.write!("2x3y5.nx", &1))
+```
+
+## Load The Model
+
+Let's reload the model and run our predictions.
+
+```elixir
+model = File.read!("2x3y5.nx") |> Nx.deserialize()
+```
+
+## Run the model
+
+As we are using scholar directly, instead of a neural network (aka Axon), we _could_ assume the model, but it is better to assume the method _predict_.
+
+```elixir
+for [x, y] <- [[0, 0], [5, 5], [10, 10]] do
+  answer =
+    apply(model.__struct__, :predict, [model, Nx.tensor([x, y])])
+    |> Nx.to_number()
+    |> Float.round(2)
+
+  IO.puts("x #{x} and y #{y} => #{answer}")
+  answer
+end
+```
