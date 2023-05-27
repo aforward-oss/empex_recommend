@@ -1,0 +1,8 @@
+<.header>
+  New Reservation
+  <:subtitle>Use this form to manage reservation records in your database.</:subtitle>
+</.header>
+
+<.reservation_form changeset={@changeset} action={~p"/reservations"} />
+
+<.back navigate={~p"/reservations"}>Back to reservations</.back>

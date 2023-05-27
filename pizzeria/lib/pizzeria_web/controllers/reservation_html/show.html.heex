@@ -1,0 +1,17 @@
+<.header>
+  Reservation <%= @reservation.id %>
+  <:subtitle>This is a reservation record from your database.</:subtitle>
+  <:actions>
+    <.link href={~p"/reservations/#{@reservation}/edit"}>
+      <.button>Edit reservation</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @reservation.name %></:item>
+  <:item title="Datetime"><%= @reservation.datetime %></:item>
+  <:item title="Guests"><%= @reservation.guests %></:item>
+</.list>
+
+<.back navigate={~p"/reservations"}>Back to reservations</.back>
