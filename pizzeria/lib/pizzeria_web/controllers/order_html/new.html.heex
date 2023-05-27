@@ -1,0 +1,8 @@
+<.header>
+  New Order
+  <:subtitle>Use this form to manage order records in your database.</:subtitle>
+</.header>
+
+<.order_form changeset={@changeset} action={~p"/orders"} />
+
+<.back navigate={~p"/orders"}>Back to orders</.back>

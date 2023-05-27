@@ -1,0 +1,18 @@
+<.header>
+  Order <%= @order.id %>
+  <:subtitle>This is a order record from your database.</:subtitle>
+  <:actions>
+    <.link href={~p"/orders/#{@order}/edit"}>
+      <.button>Edit order</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Item name"><%= @order.item_name %></:item>
+  <:item title="Table num"><%= @order.table_num %></:item>
+  <:item title="Quantity"><%= @order.quantity %></:item>
+  <:item title="Ordered at"><%= @order.ordered_at %></:item>
+</.list>
+
+<.back navigate={~p"/orders"}>Back to orders</.back>

@@ -27,6 +27,7 @@ defmodule PizzeriaWeb.Router do
   scope "/", PizzeriaWeb do
     pipe_through [:browser, :crud_layout]
     resources "/reservations", ReservationController
+    resources "/orders", OrderController
   end
 
   # Other scopes may use custom stacks.
