@@ -10,6 +10,10 @@ defmodule PizzeriaWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :crud_layout do
+    plug :put_layout, {PizzeriaWeb.Layouts, :crud}
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -18,7 +22,10 @@ defmodule PizzeriaWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+  end
 
+  scope "/", PizzeriaWeb do
+    pipe_through [:browser, :crud_layout]
     resources "/reservations", ReservationController
   end
 
