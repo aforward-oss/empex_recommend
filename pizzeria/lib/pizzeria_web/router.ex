@@ -11,7 +11,7 @@ defmodule PizzeriaWeb.Router do
   end
 
   pipeline :crud_layout do
-    plug :put_layout, {PizzeriaWeb.Layouts, :crud}
+    plug :put_layout, html: {PizzeriaWeb.Layouts, :crud}
   end
 
   pipeline :api do
