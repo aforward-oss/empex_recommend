@@ -1,7 +1,7 @@
 defmodule PizzeriaWeb.ReservationControllerTest do
   use PizzeriaWeb.ConnCase
 
-  import Pizzeria.BookingFixtures
+  import Pizzeria.PosFixtures
 
   @create_attrs %{datetime: ~N[2023-05-26 22:22:00], guests: 42, name: "some name"}
   @update_attrs %{datetime: ~N[2023-05-27 22:22:00], guests: 43, name: "some updated name"}

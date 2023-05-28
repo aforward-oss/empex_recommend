@@ -1,4 +1,4 @@
-defmodule Pizzeria.Menu.Order do
+defmodule Pizzeria.Pos.Order do
   use Ecto.Schema
   import Ecto.Changeset
 

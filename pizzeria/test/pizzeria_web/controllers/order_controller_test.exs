@@ -1,10 +1,20 @@
 defmodule PizzeriaWeb.OrderControllerTest do
   use PizzeriaWeb.ConnCase
 
-  import Pizzeria.MenuFixtures
+  import Pizzeria.PosFixtures
 
-  @create_attrs %{item_name: "some item_name", ordered_at: ~N[2023-05-26 22:50:00], quantity: 42, table_num: 42}
-  @update_attrs %{item_name: "some updated item_name", ordered_at: ~N[2023-05-27 22:50:00], quantity: 43, table_num: 43}
+  @create_attrs %{
+    item_name: "some item_name",
+    ordered_at: ~N[2023-05-26 22:50:00],
+    quantity: 42,
+    table_num: 42
+  }
+  @update_attrs %{
+    item_name: "some updated item_name",
+    ordered_at: ~N[2023-05-27 22:50:00],
+    quantity: 43,
+    table_num: 43
+  }
   @invalid_attrs %{item_name: nil, ordered_at: nil, quantity: nil, table_num: nil}
 
   describe "index" do

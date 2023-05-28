@@ -1,4 +1,4 @@
-defmodule Pizzeria.Booking.Reservation do
+defmodule Pizzeria.Pos.Reservation do
   use Ecto.Schema
   import Ecto.Changeset
 
