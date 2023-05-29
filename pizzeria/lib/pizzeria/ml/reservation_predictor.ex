@@ -23,8 +23,11 @@ defmodule Pizzeria.Ml.ReservationPredictor do
     end)
   end
 
-  def predict(num_resi) do
-    @model
+  def model(:default), do: @model
+  def model(:live), do: create_model()
+
+  def predict(num_resi, model_type \\ :default) do
+    model(model_type)
     |> LR.predict(Nx.tensor([[num_resi]]))
     |> Nx.to_flat_list()
     |> List.first()
