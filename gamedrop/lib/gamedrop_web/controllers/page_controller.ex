@@ -6,4 +6,11 @@ defmodule GamedropWeb.PageController do
     # so skip the default app layout.
     render(conn, :home, layout: false)
   end
+
+  def admin(conn, _params) do
+    conn
+    |> put_layout(html: {GamedropWeb.Layouts, :admin})
+    |> assign(:css_body_class, "bg-white md:bg-slate-800")
+    |> render(:admin)
+  end
 end

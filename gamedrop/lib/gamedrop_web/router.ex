@@ -16,9 +16,10 @@ defmodule GamedropWeb.Router do
 
   scope "/", GamedropWeb do
     pipe_through :browser
-
     get "/", PageController, :home
+    get "/a/", PageController, :admin
     live "/a/consoles", AdminConsolesLive
+    live "/a/games", AdminGamesLive
     live "/a/games/:console_id", AdminGamesLive
   end
 

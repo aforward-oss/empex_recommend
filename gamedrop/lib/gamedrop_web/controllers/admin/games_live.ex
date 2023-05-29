@@ -12,21 +12,50 @@ defmodule GamedropWeb.AdminGamesLive do
     |> reply(:ok)
   end
 
+  def mount(_params, _session, socket) do
+    socket
+    |> assign(:css_body_class, "bg-white md:bg-slate-800")
+    |> assign(:console, nil)
+    |> assign(:games, Game.all())
+    |> reply(:ok)
+  end
+
   def handle_event("upsert", params, socket) do
     Game.upsert(params)
 
     socket
-    |> assign(:games, Game.all())
+    |> assign(:games, Game.all_for_console(socket.assigns[:console]))
     |> reply(:noreply)
   end
 
   def render(assigns) do
     ~H"""
     <div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-4xl">
+      <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-8xl">
         <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <h1 class="text-xl font-bold mb-2">Consoles</h1>
           <div class="my-2">
+            <div class="grid grid-cols-6 gap-4">
+              <div>
+                Game Name
+              </div>
+              <div>
+                Console Name
+              </div>
+              <div>
+                Genre(s)
+              </div>
+              <div>
+                Difficulty
+              </div>
+              <div>
+                Release Date
+              </div>
+              <div>
+                &nbsp;
+              </div>
+            </div>
+
             <%= for game <- @games ++ [%Game{id: "new"}] do %>
               <div class="inline-block min-w-full pb-2 align-middle">
                 <table class="min-w-full">
@@ -34,7 +63,7 @@ defmodule GamedropWeb.AdminGamesLive do
                     <tr>
                       <td class="text-sm font-medium text-gray-900">
                         <.form for={nil} phx-submit="upsert" class="pt-1">
-                          <div class="grid grid-cols-4 gap-4">
+                          <div class="grid grid-cols-6 gap-4">
                             <div>
                               <label for={"game_game_name_#{game.id}"} class="sr-only">
                                 Game Name
@@ -59,6 +88,33 @@ defmodule GamedropWeb.AdminGamesLive do
                                 value={game.console_name}
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 placeholder="What is the name of the console"
+                              />
+                            </div>
+                            <div>
+                              <label for={"game_genre_#{game.id}"} class="sr-only">
+                                Genre(s)
+                              </label>
+                              <input
+                                type="text"
+                                name="genre"
+                                id={"game_genre_#{game.id}"}
+                                value={game.genre}
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                placeholder="What is the game genre"
+                              />
+                            </div>
+
+                            <div>
+                              <label for={"game_difficulty_#{game.id}"} class="sr-only">
+                                Difficulty
+                              </label>
+                              <input
+                                type="text"
+                                name="genre"
+                                id={"game_difficulty_#{game.id}"}
+                                value={game.difficulty}
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                placeholder="What is the game difficulty"
                               />
                             </div>
 
