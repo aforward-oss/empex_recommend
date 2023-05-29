@@ -1,0 +1,166 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# Visualizations
+
+```elixir
+Mix.install([
+  {:scholar, "~> 0.1"},
+  {:explorer, "~> 0.5.6"},
+  {:exla, "~> 0.5.2"},
+  {:req, "~> 0.3.6"},
+  {:kino_vega_lite, "~> 0.1.8"},
+  {:kino, "~> 0.9.0"},
+  {:kino_explorer, "~> 0.1.6"}
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+## Generating Data
+
+We are going to visualize data that _should_ fit the formula $y = 2x + 1$ using VegaLite (via Kino plugin)
+
+```elixir
+alias VegaLite, as: Vl
+require Explorer.DataFrame, as: DF
+require Explorer.Series, as: S
+Nx.global_default_backend(EXLA.Backend)
+
+{x, y} = {
+  Nx.tensor([[1], [2], [3], [5], [10], [15], [20]]),
+  Nx.tensor([3, 5, 7, 11, 20, 32, 41])
+}
+
+df = DF.new(x: x, y: y)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+
+10:35:18.387 [info] TfrtCpuClient created.
+
+```
+
+## Visualize Data
+
+```elixir
+Vl.new(
+  title: [
+    text: "Scatterplot of 2x + 1 Approximation",
+    offset: 20
+  ],
+  width: 630,
+  height: 630
+)
+|> Vl.data_from_values(df)
+|> Vl.mark(:circle)
+|> Vl.encode_field(:x, "x",
+  type: :quantitative,
+  scale: [domain: [0, 20]],
+  axis: [grid: false]
+)
+|> Vl.encode_field(:y, "y", type: :quantitative, scale: [domain: [0, 50]], axis: [grid: false])
+```
+
+<!-- livebook:{"output":true} -->
+
+```vega-lite
+{"$schema":"https://vega.github.io/schema/vega-lite/v5.json","data":{"values":[{"x":1,"y":3},{"x":2,"y":5},{"x":3,"y":7},{"x":5,"y":11},{"x":10,"y":20},{"x":15,"y":32},{"x":20,"y":41}]},"encoding":{"x":{"axis":{"grid":false},"field":"x","scale":{"domain":[0,20]},"type":"quantitative"},"y":{"axis":{"grid":false},"field":"y","scale":{"domain":[0,50]},"type":"quantitative"}},"height":630,"mark":"circle","title":{"offset":20,"text":"Scatterplot of 2x + 1 Approximation"},"width":630}
+```
+
+## Create Model
+
+For a regression task, we will use the `Scholar.Linear.LinearRegression` module.
+
+```elixir
+model = Scholar.Linear.LinearRegression.fit(x, y)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%Scholar.Linear.LinearRegression{
+  coefficients: #Nx.Tensor<
+    f32[1]
+    EXLA.Backend<host:0, 0.1890482273.3407216656.25198>
+    [2.015822410583496]
+  >,
+  intercept: #Nx.Tensor<
+    f32
+    EXLA.Backend<host:0, 0.1890482273.3407216656.25201>
+    0.8734207153320312
+  >
+}
+```
+
+As we can see, the coefficient is almost 2.0, and the intercept is nearly 1.0.  Let's plot the result of linear regression.
+
+```elixir
+[intercept] = Nx.to_flat_list(model.intercept)
+[coefficients] = Nx.to_flat_list(model.coefficients)
+x_1 = 0
+x_2 = 20
+
+line = %{
+  x: [x_1, x_2],
+  y: [x_1 * coefficients + intercept, x_2 * coefficients + intercept]
+}
+
+Vl.new(
+  title: [
+    text: "Scatterplot of Generated Data",
+    offset: 20
+  ],
+  width: 630,
+  height: 630
+)
+|> Vl.layers([
+  Vl.new()
+  |> Vl.data_from_values(df)
+  |> Vl.mark(:circle)
+  |> Vl.encode_field(:x, "x",
+    type: :quantitative,
+    scale: [domain: [0, 20]],
+    axis: [grid: false]
+  )
+  |> Vl.encode_field(:y, "y",
+    type: :quantitative,
+    scale: [domain: [0, 50]],
+    axis: [grid: false]
+  ),
+  Vl.new()
+  |> Vl.data_from_values(line)
+  |> Vl.mark(:line, color: :green)
+  |> Vl.encode_field(:x, "x", type: :quantitative, scale: [domain: [0, 20]])
+  |> Vl.encode_field(:y, "y", type: :quantitative, scale: [domain: [0, 50]])
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```vega-lite
+{"$schema":"https://vega.github.io/schema/vega-lite/v5.json","height":630,"layer":[{"data":{"values":[{"x":1,"y":3},{"x":2,"y":5},{"x":3,"y":7},{"x":5,"y":11},{"x":10,"y":20},{"x":15,"y":32},{"x":20,"y":41}]},"encoding":{"x":{"axis":{"grid":false},"field":"x","scale":{"domain":[0,20]},"type":"quantitative"},"y":{"axis":{"grid":false},"field":"y","scale":{"domain":[0,50]},"type":"quantitative"}},"mark":"circle"},{"data":{"values":[{"x":0,"y":0.8734207153320312},{"x":20,"y":41.18986892700195}]},"encoding":{"x":{"field":"x","scale":{"domain":[0,20]},"type":"quantitative"},"y":{"field":"y","scale":{"domain":[0,50]},"type":"quantitative"}},"mark":{"color":"green","type":"line"}}],"title":{"offset":20,"text":"Scatterplot of Generated Data"},"width":630}
+```
+
+```elixir
+x_prediction = Nx.tensor([[9]])
+
+[y_prediction] =
+  model
+  |> Scholar.Linear.LinearRegression.predict(x_prediction)
+  |> Nx.to_flat_list()
+
+[x_prediction] = Nx.to_flat_list(x_prediction)
+{x_prediction, y_prediction}
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{9, 19.015823364257812}
+```
