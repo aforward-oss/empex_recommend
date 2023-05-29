@@ -1,1 +1,44 @@
-<%= @inner_content %>
+<body class={"#{assigns[:css_body_class] || "bg-white md:bg-slate-800"}"}>
+  <div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-4xl">
+      <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+
+        <header class="pb-10">
+          <div class="flex items-center justify-between border-b border-zinc-100 py-3 text-sm">
+            <div class="flex items-center gap-4">
+              <a href="/">
+                <img src={~p"/images/logo.png"} width="36" />
+              </a>
+              <p class="bg-brand/5 text-brand rounded-full px-2 font-medium leading-6">
+                v<%= Application.spec(:gamedrop, :vsn) %>
+              </p>
+            </div>
+            <div class="flex items-center gap-4 font-semibold leading-6 text-zinc-900">
+              <a href={~p"/gameplays"} class="hover:text-zinc-700">
+                Game Plays
+              </a>
+              <a href={~p"/a/consoles"} class="hover:text-zinc-700">
+                Consoles
+              </a>
+              <a href={~p"/a/games"} class="hover:text-zinc-700">
+                Games
+              </a>
+              <a
+                href="https://www.empex.co/new-york"
+                class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80"
+              >
+                Empex NY 2023 <span aria-hidden="true">&rarr;</span>
+              </a>
+            </div>
+          </div>
+        </header>
+
+
+
+        <.flash_group flash={@flash} />
+        <%= @inner_content %>
+      </div>
+    </div>
+  </div>
+</body>
+

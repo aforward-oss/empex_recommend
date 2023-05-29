@@ -1,0 +1,26 @@
+<.simple_form :let={f} for={@changeset} action={@action}>
+  <.error :if={@changeset.action}>
+    Oops, something went wrong! Please check the errors below.
+  </.error>
+  <.input field={f[:console_name]} type="text" label="Console name" />
+  <.input field={f[:game_name]} type="text" label="Game name" />
+  <.input field={f[:rental_cost]} type="number" label="Rental cost" step="any" />
+  <.input
+    field={f[:gameplay_types]}
+    type="select"
+    multiple
+    label="Gameplay types"
+    options={[
+      {"Sports", "sports"},
+      {"Role Playing", "role_playing"},
+      {"Quest", "quest"},
+      {"Arcade", "arcade"},
+      {"Party Games", "party_games"},
+      {"Turned Based", "turn_based"}
+    ]}
+  />
+  <.input field={f[:top_rated]} type="checkbox" label="Top rated" />
+  <:actions>
+    <.button>Save Gameplay</.button>
+  </:actions>
+</.simple_form>

@@ -8,9 +8,6 @@ defmodule GamedropWeb.PageController do
   end
 
   def admin(conn, _params) do
-    conn
-    |> put_layout(html: {GamedropWeb.Layouts, :admin})
-    |> assign(:css_body_class, "bg-white md:bg-slate-800")
-    |> render(:admin)
+    render(conn, :admin)
   end
 end

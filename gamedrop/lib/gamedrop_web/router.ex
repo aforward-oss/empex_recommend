@@ -21,6 +21,7 @@ defmodule GamedropWeb.Router do
     live "/a/consoles", AdminConsolesLive
     live "/a/games", AdminGamesLive
     live "/a/games/:console_id", AdminGamesLive
+    resources "/gameplays", GameplayController
   end
 
   # Other scopes may use custom stacks.

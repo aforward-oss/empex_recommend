@@ -1,0 +1,27 @@
+<.header>
+  Listing Gameplays
+  <:actions>
+    <.link href={~p"/gameplays/new"}>
+      <.button>New Gameplay</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="gameplays" rows={@gameplays} row_click={&JS.navigate(~p"/gameplays/#{&1}")}>
+  <:col :let={gameplay} label="Console name"><%= gameplay.console_name %></:col>
+  <:col :let={gameplay} label="Game name"><%= gameplay.game_name %></:col>
+  <:col :let={gameplay} label="Rental cost"><%= gameplay.rental_cost %></:col>
+  <:col :let={gameplay} label="Gameplay types"><%= gameplay.gameplay_types %></:col>
+  <:col :let={gameplay} label="Top rated"><%= gameplay.top_rated %></:col>
+  <:action :let={gameplay}>
+    <div class="sr-only">
+      <.link navigate={~p"/gameplays/#{gameplay}"}>Show</.link>
+    </div>
+    <.link navigate={~p"/gameplays/#{gameplay}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={gameplay}>
+    <.link href={~p"/gameplays/#{gameplay}"} method="delete" data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>

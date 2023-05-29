@@ -6,7 +6,6 @@ defmodule GamedropWeb.AdminGamesLive do
     console = Console.by_id(console_id)
 
     socket
-    |> assign(:css_body_class, "bg-white md:bg-slate-800")
     |> assign(:console, console)
     |> assign(:games, Game.all_for_console(console))
     |> reply(:ok)
@@ -14,7 +13,6 @@ defmodule GamedropWeb.AdminGamesLive do
 
   def mount(_params, _session, socket) do
     socket
-    |> assign(:css_body_class, "bg-white md:bg-slate-800")
     |> assign(:console, nil)
     |> assign(:games, Game.all())
     |> reply(:ok)

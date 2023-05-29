@@ -1,0 +1,19 @@
+<.header>
+  Gameplay <%= @gameplay.id %>
+  <:subtitle>This is a gameplay record from your database.</:subtitle>
+  <:actions>
+    <.link href={~p"/gameplays/#{@gameplay}/edit"}>
+      <.button>Edit gameplay</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Console name"><%= @gameplay.console_name %></:item>
+  <:item title="Game name"><%= @gameplay.game_name %></:item>
+  <:item title="Rental cost"><%= @gameplay.rental_cost %></:item>
+  <:item title="Gameplay types"><%= @gameplay.gameplay_types %></:item>
+  <:item title="Top rated"><%= @gameplay.top_rated %></:item>
+</.list>
+
+<.back navigate={~p"/gameplays"}>Back to gameplays</.back>

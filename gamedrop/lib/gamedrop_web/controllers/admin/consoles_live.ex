@@ -4,7 +4,6 @@ defmodule GamedropWeb.AdminConsolesLive do
 
   def mount(_params, _session, socket) do
     socket
-    |> assign(:css_body_class, "bg-white md:bg-slate-800")
     |> assign(:consoles, Console.all())
     |> reply(:ok)
   end

@@ -1,0 +1,8 @@
+<.header>
+  Edit Gameplay <%= @gameplay.id %>
+  <:subtitle>Use this form to manage gameplay records in your database.</:subtitle>
+</.header>
+
+<.gameplay_form changeset={@changeset} action={~p"/gameplays/#{@gameplay}"} />
+
+<.back navigate={~p"/gameplays"}>Back to gameplays</.back>

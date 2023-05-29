@@ -11,7 +11,5 @@
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
   </head>
-  <body class={"#{assigns[:css_body_class] || "bg-white antialiased"}"}>
-    <%= @inner_content %>
-  </body>
+  <%= @inner_content %>
 </html>
