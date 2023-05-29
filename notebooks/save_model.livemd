@@ -1,63 +1,25 @@
-# Deploying a Model
+# Saving a Model
 
 ```elixir
 Mix.install([
   {:scholar, "~> 0.1"},
-  {:nx, "~> 0.5"},
-  {:axon, "~> 0.5"}
+  {:nx, "~> 0.5"}
 ])
-```
 
-## Data
-
-We are going to run a simple experiment to extrapolate the formula `z = 2x - 3y + 5`
-based on a a few points on the graph.
-
-```elixir
-data =
-  Nx.tensor([
-    [1, 1, 4],
-    [1, 2, 1],
-    [1, 3, -2],
-    [2, 1, 6],
-    [3, 1, 8],
-    [4, 1, 10],
-    [6, 2, 11],
-    [7, 6, 1],
-    [8, 2, 15]
-  ])
-```
-
-## Features and Labels
-
-As good as our data is, we still will need to extract our model into features, this next step will be dependent on the shape of your model.
-
-```elixir
-features = data[[.., 0..1]]
-label = data[[.., 2]]
-
-{features, label}
-```
-
-## Train Data
-
-Now we can use Scholar to run a linear regression on the data.
-
-```elixir
 alias Scholar.Linear.LinearRegression, as: LR
-model = LR.fit(features, label)
 ```
 
-## (Manual) Evaluation of the Data
+## Build the Model
 
-As this was a simple model, we will just run a few manual tests, but the outputs look very accurate with a predicted model of z = 1.99x - 2.99y + 5.02
+We will use our Pizzeria problem to estimate the number of pizza doughs to prepare.
 
 ```elixir
-for [x, y] <- [[0, 0], [5, 5], [10, 10]] do
-  answer = LR.predict(model, Nx.tensor([x, y])) |> Nx.to_number() |> Float.round(2)
-  IO.puts("x #{x} and y #{y} => #{answer}")
-  answer
-end
+{features, label} = {
+  Nx.stack([12, 20, 18, 30, 24]) |> Nx.stack(axis: -1),
+  Nx.tensor([36, 72, 68, 82, 75])
+}
+
+model = LR.fit(features, label)
 ```
 
 ## Save The Model
@@ -67,7 +29,7 @@ Great, so now we want to save this model for re-use.  For that, we reach into Ax
 ```elixir
 model
 |> Nx.serialize()
-|> then(&File.write!("2x3y5.nx", &1))
+|> then(&File.write!("pizzeria.nx", &1))
 ```
 
 ## Load The Model
@@ -75,21 +37,53 @@ model
 Let's reload the model and run our predictions.
 
 ```elixir
-model = File.read!("2x3y5.nx") |> Nx.deserialize()
+model = File.read!("pizzeria.nx") |> Nx.deserialize()
 ```
 
 ## Run the model
 
+Now that the model is loaded back into Elixir, we can run the model and predict the outcome of the number of pizza doughs to create.
+
+```elixir
+LR.predict(model, Nx.tensor([15]))
+|> Nx.to_number()
+|> Float.round(0)
+```
+
+## More Generic Model Runner
+
 As we are using scholar directly, instead of a neural network (aka Axon), we _could_ assume the model, but it is better to assume the method _predict_.
 
 ```elixir
-for [x, y] <- [[0, 0], [5, 5], [10, 10]] do
-  answer =
-    apply(model.__struct__, :predict, [model, Nx.tensor([x, y])])
+for num_resi <- [5, 10, 15, 20, 25, 30, 35, 40] do
+  num_doughs =
+    apply(model.__struct__, :predict, [model, Nx.tensor([num_resi])])
     |> Nx.to_number()
-    |> Float.round(2)
+    |> Float.round(0)
 
-  IO.puts("x #{x} and y #{y} => #{answer}")
-  answer
+  IO.puts("With #{num_resi} reseravations  we should make #{num_doughs} pizza doughs")
+  num_doughs
+end
+```
+
+## Add To Project
+
+You can create a Predictor within your application that encapsulates the above.
+
+```elixir
+defmodule Pizzeria do
+  @model File.read!("pizzeria.nx") |> Nx.deserialize()
+
+  def num_doughs(num_resi) do
+    apply(@model.__struct__, :predict, [@model, Nx.tensor([num_resi])])
+    |> Nx.to_number()
+    |> Float.round(0)
+  end
+end
+
+for num_resi <- [5, 10, 15, 20, 25, 30, 35, 40] do
+  num_doughs = Pizzeria.num_doughs(num_resi)
+  IO.puts("With #{num_resi} reseravations  we should make #{num_doughs} pizza doughs")
+  num_doughs
 end
 ```
