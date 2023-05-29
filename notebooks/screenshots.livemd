@@ -1,0 +1,91 @@
+# Documentation For Screenshots
+
+```elixir
+Mix.install([
+  {:scholar, "~> 0.1"},
+  {:explorer, "~> 0.5.6"},
+  {:exla, "~> 0.5.2"},
+  {:req, "~> 0.3.6"},
+  {:kino_vega_lite, "~> 0.1.8"},
+  {:kino, "~> 0.9.0"},
+  {:kino_explorer, "~> 0.1.6"}
+])
+```
+
+## Pre-requisites
+
+Setting up aliases to generate some visualizations
+
+```elixir
+alias VegaLite, as: Vl
+require Explorer.DataFrame, as: DF
+require Explorer.Series, as: S
+Nx.global_default_backend(EXLA.Backend)
+
+defmodule LinearData do
+  import Nx.Defn
+
+  defn data do
+    key = Nx.Random.key(42)
+    size = 100
+    {x, new_key} = Nx.Random.uniform(key, 0, 2, shape: {size, 1}, type: :f64)
+    {noise, _} = Nx.Random.uniform(new_key, -0.5, 0.5, shape: {size, 1}, type: :f64)
+    y = 3 * x + 4 + noise
+    {x, y}
+  end
+end
+```
+
+## Linear Regression
+
+```elixir
+size = 100
+{x, y} = LinearData.data()
+
+df = DF.new(x: x, y: y)
+```
+
+Now let's plot the generated points.
+
+```elixir
+model = Scholar.Linear.LinearRegression.fit(x, y)
+
+[intercept] = Nx.to_flat_list(model.intercept)
+[coefficients] = Nx.to_flat_list(model.coefficients)
+x_1 = 0
+x_2 = 2
+
+line = %{
+  x: [x_1, x_2],
+  y: [x_1 * coefficients + intercept, x_2 * coefficients + intercept]
+}
+
+Vl.new(
+  title: [
+    text: "Scatterplot of Generated Data",
+    offset: 20
+  ],
+  width: 630,
+  height: 630
+)
+|> Vl.layers([
+  Vl.new()
+  |> Vl.data_from_values(df)
+  |> Vl.mark(:circle)
+  |> Vl.encode_field(:x, "x",
+    type: :quantitative,
+    scale: [domain: [-0.05, 2.05]],
+    axis: [grid: false]
+  )
+  |> Vl.encode_field(:y, "y",
+    type: :quantitative,
+    scale: [domain: [2.5, 12]],
+    axis: [grid: false]
+  ),
+  Vl.new()
+  |> Vl.data_from_values(line)
+  |> Vl.mark(:line, color: :green)
+  |> Vl.encode_field(:x, "x", type: :quantitative, scale: [domain: [-0.05, 2.05]])
+  |> Vl.encode_field(:y, "y", type: :quantitative, scale: [domain: [2.5, 12]])
+])
+```
