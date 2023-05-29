@@ -32,6 +32,8 @@ defmodule Pizzeria.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:nx, "~> 0.5"},
+      {:scholar, "~> 0.1"},
       {:phoenix, "~> 1.7.2"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.6"},
