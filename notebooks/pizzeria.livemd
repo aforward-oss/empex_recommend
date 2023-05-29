@@ -1,0 +1,178 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# Pizzeria
+
+## Section
+
+```elixir
+Mix.install([
+  {:scholar, "~> 0.1"},
+  {:explorer, "~> 0.5.6"},
+  {:exla, "~> 0.5.2"},
+  {:req, "~> 0.3.6"},
+  {:kino_vega_lite, "~> 0.1.8"},
+  {:kino, "~> 0.9.0"},
+  {:kino_explorer, "~> 0.1.6"}
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+And then alias our modules
+
+```elixir
+alias Scholar.Linear.LinearRegression, as: LR
+
+alias VegaLite, as: Vl
+require Explorer.DataFrame, as: DF
+require Explorer.Series, as: S
+Nx.global_default_backend(EXLA.Backend)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{Nx.BinaryBackend, []}
+```
+
+## Generating Data
+
+Based on the last week of data we see the following
+
+| Date | # Resies | # Pizzas
+| --- | --- | --- |
+| Monday |  12 | 36
+| Tuesday | 20 | 72
+| Wednesday | 18 | 68
+| Thursday | 30 | 82
+| Friday | 0 | 98
+| Saturday |  0 | 168
+| Sunday |  24 | 75 |
+
+Now, the resaurant doesn't take reservations on Friday and Saturday.
+So how should we proceed?  We can drop the data and then not
+predict on Friday's and Saturdays.  Or, we could estimate the
+"resrvations" based on how many "flips" we normally get.
+For today, we will just drop that data.  Here's our model
+
+```elixir
+{x, y} = {
+  Nx.stack([12, 20, 18, 30, 24]) |> Nx.stack(axis: -1),
+  Nx.tensor([36, 72, 68, 82, 75])
+}
+
+model = LR.fit(x, y)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+
+14:39:59.177 [info] TfrtCpuClient created.
+
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%Scholar.Linear.LinearRegression{
+  coefficients: #Nx.Tensor<
+    f32[1]
+    EXLA.Backend<host:0, 0.2074262708.2908880912.139930>
+    [2.3761065006256104]
+  >,
+  intercept: #Nx.Tensor<
+    f32
+    EXLA.Backend<host:0, 0.2074262708.2908880912.139933>
+    17.176986694335938
+  >
+}
+```
+
+And our prediction for Monday
+
+```elixir
+LR.predict(model, Nx.tensor([[15]]))
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Nx.Tensor<
+  f32[1]
+  EXLA.Backend<host:0, 0.2074262708.2908880912.139937>
+  [52.81858444213867]
+>
+```
+
+## Visualize Data
+
+Let's visualize the data to confirm our reply
+
+```elixir
+df = DF.new(x: x, y: y)
+
+Vl.new(
+  title: [text: "Pizza Dough Approximation"],
+  width: 630,
+  height: 630
+)
+|> Vl.data_from_values(df)
+|> Vl.mark(:circle)
+|> Vl.encode_field(:x, "x", type: :quantitative)
+|> Vl.encode_field(:y, "y", type: :quantitative)
+```
+
+<!-- livebook:{"output":true} -->
+
+```vega-lite
+{"$schema":"https://vega.github.io/schema/vega-lite/v5.json","data":{"values":[{"x":12,"y":36},{"x":20,"y":72},{"x":18,"y":68},{"x":30,"y":82},{"x":24,"y":75}]},"encoding":{"x":{"field":"x","type":"quantitative"},"y":{"field":"y","type":"quantitative"}},"height":630,"mark":"circle","title":{"text":"Pizza Dough Approximation"},"width":630}
+```
+
+As we can see, the coefficient is almost 2.0, and the intercept is nearly 1.0.  Let's plot the result of linear regression.
+
+```elixir
+[intercept] = Nx.to_flat_list(model.intercept)
+[coefficients] = Nx.to_flat_list(model.coefficients)
+x_1 = 0
+x_2 = 40
+
+line = %{
+  x: [x_1, x_2],
+  y: [x_1 * coefficients + intercept, x_2 * coefficients + intercept]
+}
+
+Vl.new(
+  title: [text: "Pizza Dough Approximation"],
+  width: 630,
+  height: 630
+)
+|> Vl.layers([
+  Vl.new()
+  |> Vl.data_from_values(df)
+  |> Vl.mark(:circle)
+  |> Vl.encode_field(:x, "x",
+    type: :quantitative,
+    axis: [grid: false]
+  )
+  |> Vl.encode_field(:y, "y",
+    type: :quantitative,
+    axis: [grid: false]
+  ),
+  Vl.new()
+  |> Vl.data_from_values(line)
+  |> Vl.mark(:line, color: :green)
+  |> Vl.encode_field(:x, "x", type: :quantitative)
+  |> Vl.encode_field(:y, "y", type: :quantitative)
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```vega-lite
+{"$schema":"https://vega.github.io/schema/vega-lite/v5.json","height":630,"layer":[{"data":{"values":[{"x":12,"y":36},{"x":20,"y":72},{"x":18,"y":68},{"x":30,"y":82},{"x":24,"y":75}]},"encoding":{"x":{"axis":{"grid":false},"field":"x","type":"quantitative"},"y":{"axis":{"grid":false},"field":"y","type":"quantitative"}},"mark":"circle"},{"data":{"values":[{"x":0,"y":17.176986694335938},{"x":40,"y":112.22124671936035}]},"encoding":{"x":{"field":"x","type":"quantitative"},"y":{"field":"y","type":"quantitative"}},"mark":{"color":"green","type":"line"}}],"title":{"text":"Pizza Dough Approximation"},"width":630}
+```
