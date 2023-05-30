@@ -1,0 +1,33 @@
+<.header>
+  Listing Games
+  <:actions>
+    <.link href={~p"/games/new"}>
+      <.button>New Game</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="games" rows={@games} row_click={&JS.navigate(~p"/games/#{&1}")}>
+  <:col :let={game} label="Game name"><%= game.game_name %></:col>
+  <:col :let={game} label="Console name"><%= game.console_name %></:col>
+  <:col :let={game} label="Release date"><%= game.release_date %></:col>
+  <:col :let={game} label="Developer"><%= game.developer %></:col>
+  <:col :let={game} label="Genre"><%= game.genre %></:col>
+  <:col :let={game} label="Difficulty"><%= game.difficulty %></:col>
+  <:col :let={game} label="Gameplay rating"><%= game.gameplay_rating %></:col>
+  <:col :let={game} label="Maturity rating"><%= game.maturity_rating %></:col>
+  <:col :let={game} label="Multiplayer"><%= game.multiplayer %></:col>
+  <:col :let={game} label="Player mode"><%= game.player_mode %></:col>
+  <:col :let={game} label="Description"><%= game.description %></:col>
+  <:action :let={game}>
+    <div class="sr-only">
+      <.link navigate={~p"/games/#{game}"}>Show</.link>
+    </div>
+    <.link navigate={~p"/games/#{game}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={game}>
+    <.link href={~p"/games/#{game}"} method="delete" data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>

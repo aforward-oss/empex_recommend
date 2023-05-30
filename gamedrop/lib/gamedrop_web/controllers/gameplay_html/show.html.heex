@@ -12,7 +12,7 @@
   <:item title="Console name"><%= @gameplay.console_name %></:item>
   <:item title="Game name"><%= @gameplay.game_name %></:item>
   <:item title="Rental cost"><%= @gameplay.rental_cost %></:item>
-  <:item title="Gameplay types"><%= @gameplay.gameplay_types %></:item>
+  <:item title="Gameplay types"><%= @gameplay.gameplay_types |> Enum.join(", ") %></:item>
   <:item title="Top rated"><%= @gameplay.top_rated %></:item>
 </.list>
 

@@ -4,12 +4,15 @@ defmodule Gamedrop.Migrations.Consoles do
   def run() do
     consoles()
     atari_games()
+    atari_gameplays()
     nes_games()
+    nes_gameplays()
+    switch_gameplays()
     :ok
   end
 
   def consoles() do
-    Repo.delete_all(Gamedrop.Models.Console)
+    Repo.delete_all(Gamedrop.Pos.Console)
 
     Repo.run_sql("""
     INSERT INTO consoles
@@ -71,6 +74,34 @@ defmodule Gamedrop.Migrations.Consoles do
     """)
   end
 
+  def atari_gameplays() do
+    Repo.run_sql("DELETE FROM gameplays WHERE console_name = 'Atari 2600'")
+
+    Repo.run_sql("""
+    INSERT INTO gameplays (console_name, game_name, gameplay_types, rental_cost, top_rated, inserted_at, updated_at)
+    VALUES
+    ('Atari 2600', 'Adventure', ARRAY['role_playing', 'quest'], 5.0, true, NOW(), NOW()),
+    ('Atari 2600', 'Asteroids', ARRAY['arcade'], 5.0, true, NOW(), NOW()),
+    ('Atari 2600', 'Beat ''Em & Eat ''Em', ARRAY['arcade'], 3.0, false, NOW(), NOW()),
+    ('Atari 2600', 'Chase the Chuckwagon', ARRAY['arcade'], 3.0, false, NOW(), NOW()),
+    ('Atari 2600', 'Custer''s Revenge', ARRAY['arcade'], 3.0, false, NOW(), NOW()),
+    ('Atari 2600', 'Demon Attack', ARRAY['arcade'], 3.0, true, NOW(), NOW()),
+    ('Atari 2600', 'Desert Falcon', ARRAY['arcade'], 2.0, false, NOW(), NOW()),
+    ('Atari 2600', 'E.T. the Extra-Terrestrial', ARRAY['arcade'], 10.0, false, NOW(), NOW()),
+    ('Atari 2600', 'Frogger', ARRAY['arcade'], 12.0, true, NOW(), NOW()),
+    ('Atari 2600', 'Karate', ARRAY['arcade'], 10.0, false, NOW(), NOW()),
+    ('Atari 2600', 'Missile Command', ARRAY['arcade'], 5.0, true, NOW(), NOW()),
+    ('Atari 2600', 'Pac-Man', ARRAY['arcade'], 12.0, true, NOW(), NOW()),
+    ('Atari 2600', 'Pitfall!', ARRAY['arcade'], 12.0, true, NOW(), NOW()),
+    ('Atari 2600', 'River Raid', ARRAY['arcade'], 10.0, true, NOW(), NOW()),
+    ('Atari 2600', 'Sneak ''n Peek', ARRAY['arcade'], 10.0, false, NOW(), NOW()),
+    ('Atari 2600', 'Space Invaders', ARRAY['arcade'], 30.0, true, NOW(), NOW()),
+    ('Atari 2600', 'Swordquest: Waterworld', ARRAY['arcade'], 2.0, false, NOW(), NOW()),
+    ('Atari 2600', 'Universal Chaos', ARRAY['arcade'], 2.0, false, NOW(), NOW()),
+    ('Atari 2600', 'Yars'' Revenge', ARRAY['arcade'], 2.0, false, NOW(), NOW());
+    """)
+  end
+
   def nes_games() do
     Repo.run_sql("DELETE FROM games WHERE console_name = 'NES'")
 
@@ -96,6 +127,62 @@ defmodule Gamedrop.Migrations.Consoles do
     ('The Legend of Zelda', 'Action-Adventure', 'NES', '1987-08-22', 'Nintendo', 'Everyone', '89', 'False', 'Single-player', '3', 'Embark on a quest as Link to collect the Triforce pieces and save Princess Zelda from the evil Ganon.', NOW(), NOW()),
     ('The Uncanny X-Men', 'Action', 'NES', '1989-12-01', 'LJN', 'Everyone', '35', 'True', 'Single-player, Multiplayer', '2', 'Control X-Men characters to defeat Magneto and other villains in this side-scrolling action game.', NOW(), NOW()),
     ('Where''s Waldo?', 'Puzzle', 'NES', '1991-09-01', 'Bethesda Softworks', 'Everyone', '30', 'False', 'Single-player', '1', 'Solve a series of puzzles by finding Waldo in various scenes.', NOW(), NOW());
+    """)
+  end
+
+  def nes_gameplays() do
+    Repo.run_sql("DELETE FROM gameplays WHERE console_name = 'NES'")
+
+    Repo.run_sql("""
+    INSERT INTO gameplays (console_name, game_name, gameplay_types, rental_cost, top_rated, inserted_at, updated_at)
+    VALUES
+    ('NES', 'Action 52', ARRAY['action'], 7.5, false, NOW(), NOW()),
+    ('NES', 'Back to the Future', ARRAY['adventure'], 2.5, false, NOW(), NOW()),
+    ('NES', 'Castlevania', ARRAY['adventure'], 17.5, true, NOW(), NOW()),
+    ('NES', 'Contra', ARRAY['action'], 22.5, true, NOW(), NOW()),
+    ('NES', 'Dr. Jekyll and Mr. Hyde', ARRAY['adventure'], 2.5, false, NOW(), NOW()),
+    ('NES', 'Dragon Warrior', ARRAY['role_playing'], 10.0, false, NOW(), NOW()),
+    ('NES', 'Final Fantasy', ARRAY['role_playing'], 15.0, true, NOW(), NOW()),
+    ('NES', 'Friday the 13th', ARRAY['action'], 2.5, false, NOW(), NOW()),
+    ('NES', 'Karate Champ', ARRAY['action'], 5.0, false, NOW(), NOW()),
+    ('NES', 'Kirby''s Adventure', ARRAY['adventure'], 12.5, true, NOW(), NOW()),
+    ('NES', 'Mega Man 2', ARRAY['action'], 20.0, true, NOW(), NOW()),
+    ('NES', 'Metroid', ARRAY['adventure'], 15.0, true, NOW(), NOW()),
+    ('NES', 'Mike Tyson''s Punch-Out!!', ARRAY['action'], 25.0, true, NOW(), NOW()),
+    ('NES', 'Super Mario Bros. 3', ARRAY['adventure'], 25.0, true, NOW(), NOW()),
+    ('NES', 'Super Pitfall', ARRAY['adventure'], 7.5, false, NOW(), NOW()),
+    ('NES', 'The Legend of Zelda', ARRAY['adventure'], 25.0, true, NOW(), NOW()),
+    ('NES', 'The Uncanny X-Men', ARRAY['action'], 5.0, false, NOW(), NOW()),
+    ('NES', 'Where''s Waldo?', ARRAY['adventure'], 2.5, false, NOW(), NOW());
+    """)
+  end
+
+  def switch_gameplays() do
+    Repo.run_sql("DELETE FROM gameplays WHERE console_name = 'Switch'")
+
+    Repo.run_sql("""
+    INSERT INTO gameplays (console_name, game_name, gameplay_types, rental_cost, top_rated, inserted_at, updated_at)
+    VALUES
+    ('Switch', 'The Legend of Zelda: Breath of the Wild', ARRAY['action', 'adventure'], 25.0, true, NOW(), NOW()),
+    ('Switch', 'Super Mario Odyssey', ARRAY['action', 'adventure'], 25.0, true, NOW(), NOW()),
+    ('Switch', 'Animal Crossing: New Horizons', ARRAY['adventure', 'simulation'], 25.0, true, NOW(), NOW()),
+    ('Switch', 'Mario Kart 8 Deluxe', ARRAY['racing'], 25.0, true, NOW(), NOW()),
+    ('Switch', 'Splatoon 2', ARRAY['shooter', 'action'], 25.0, true, NOW(), NOW()),
+    ('Switch', 'Super Smash Bros. Ultimate', ARRAY['fighting', 'action'], 25.0, true, NOW(), NOW()),
+    ('Switch', 'Pokémon Sword and Shield', ARRAY['role-playing'], 25.0, true, NOW(), NOW()),
+    ('Switch', 'Fire Emblem: Three Houses', ARRAY['strategy', 'role-playing'], 25.0, true, NOW(), NOW()),
+    ('Switch', 'Xenoblade Chronicles 2', ARRAY['role-playing', 'action'], 25.0, true, NOW(), NOW()),
+    ('Switch', 'The Witcher 3: Wild Hunt', ARRAY['role-playing', 'action'], 25.0, true, NOW(), NOW()),
+    ('Switch', 'Troll and I', ARRAY['adventure', 'action'], 5.0, false, NOW(), NOW()),
+    ('Switch', 'Hello Neighbor', ARRAY['adventure', 'puzzle'], 5.0, false, NOW(), NOW()),
+    ('Switch', 'Trollhunters: Defenders of Arcadia', ARRAY['adventure', 'action'], 5.0, false, NOW(), NOW()),
+    ('Switch', 'Nickelodeon Kart Racers', ARRAY['racing', 'party'], 5.0, false, NOW(), NOW()),
+    ('Switch', 'PAW Patrol: Mighty Pups Save Adventure Bay', ARRAY['adventure', 'action'], 5.0, false, NOW(), NOW()),
+    ('Switch', 'Jumanji: The Video Game', ARRAY['adventure', 'action'], 5.0, false, NOW(), NOW()),
+    ('Switch', 'Vampyr', ARRAY['role-playing', 'action'], 5.0, false, NOW(), NOW()),
+    ('Switch', 'Ben 10: Power Trip', ARRAY['adventure', 'action'], 5.0, false, NOW(), NOW()),
+    ('Switch', 'Adventure Time: Pirates of the Enchiridion', ARRAY['adventure', 'action'], 5.0, false, NOW(), NOW()),
+    ('Switch', 'Fast RMX', ARRAY['racing', 'action'], 5.0, false, NOW(), NOW());
     """)
   end
 end

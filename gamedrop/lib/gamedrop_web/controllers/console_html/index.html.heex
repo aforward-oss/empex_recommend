@@ -1,0 +1,26 @@
+<.header>
+  Listing Consoles
+  <:actions>
+    <.link href={~p"/consoles/new"}>
+      <.button>New Console</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="consoles" rows={@consoles} row_click={&JS.navigate(~p"/consoles/#{&1}")}>
+  <:col :let={console} label="Company name"><%= console.company_name %></:col>
+  <:col :let={console} label="Console name"><%= console.console_name %></:col>
+  <:col :let={console} label="Release date"><%= console.release_date %></:col>
+  <:col :let={console} label="Company website"><%= console.company_website %></:col>
+  <:action :let={console}>
+    <div class="sr-only">
+      <.link navigate={~p"/consoles/#{console}"}>Show</.link>
+    </div>
+    <.link navigate={~p"/consoles/#{console}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={console}>
+    <.link href={~p"/consoles/#{console}"} method="delete" data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>

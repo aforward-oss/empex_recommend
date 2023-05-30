@@ -18,10 +18,9 @@ defmodule GamedropWeb.Router do
     pipe_through :browser
     get "/", PageController, :home
     get "/a/", PageController, :admin
-    live "/a/consoles", AdminConsolesLive
-    live "/a/games", AdminGamesLive
-    live "/a/games/:console_id", AdminGamesLive
     resources "/gameplays", GameplayController
+    resources "/consoles", ConsoleController
+    resources "/games", GameController
   end
 
   # Other scopes may use custom stacks.

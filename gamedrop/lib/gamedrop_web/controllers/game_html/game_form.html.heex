@@ -1,0 +1,19 @@
+<.simple_form :let={f} for={@changeset} action={@action}>
+  <.error :if={@changeset.action}>
+    Oops, something went wrong! Please check the errors below.
+  </.error>
+  <.input field={f[:game_name]} type="text" label="Game name" />
+  <.input field={f[:console_name]} type="text" label="Console name" />
+  <.input field={f[:release_date]} type="date" label="Release date" />
+  <.input field={f[:developer]} type="text" label="Developer" />
+  <.input field={f[:genre]} type="text" label="Genre" />
+  <.input field={f[:difficulty]} type="number" label="Difficulty" />
+  <.input field={f[:gameplay_rating]} type="number" label="Gameplay rating" />
+  <.input field={f[:maturity_rating]} type="text" label="Maturity rating" />
+  <.input field={f[:multiplayer]} type="checkbox" label="Multiplayer" />
+  <.input field={f[:player_mode]} type="text" label="Player mode" />
+  <.input field={f[:description]} type="text" label="Description" />
+  <:actions>
+    <.button>Save Game</.button>
+  </:actions>
+</.simple_form>

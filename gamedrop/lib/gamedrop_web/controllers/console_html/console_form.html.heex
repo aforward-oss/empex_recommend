@@ -1,0 +1,12 @@
+<.simple_form :let={f} for={@changeset} action={@action}>
+  <.error :if={@changeset.action}>
+    Oops, something went wrong! Please check the errors below.
+  </.error>
+  <.input field={f[:company_name]} type="text" label="Company name" />
+  <.input field={f[:console_name]} type="text" label="Console name" />
+  <.input field={f[:release_date]} type="date" label="Release date" />
+  <.input field={f[:company_website]} type="text" label="Company website" />
+  <:actions>
+    <.button>Save Console</.button>
+  </:actions>
+</.simple_form>

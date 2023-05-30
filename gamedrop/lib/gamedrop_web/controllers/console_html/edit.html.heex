@@ -1,0 +1,8 @@
+<.header>
+  Edit Console <%= @console.id %>
+  <:subtitle>Use this form to manage console records in your database.</:subtitle>
+</.header>
+
+<.console_form changeset={@changeset} action={~p"/consoles/#{@console}"} />
+
+<.back navigate={~p"/consoles"}>Back to consoles</.back>

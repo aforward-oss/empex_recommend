@@ -11,7 +11,7 @@
   <:col :let={gameplay} label="Console name"><%= gameplay.console_name %></:col>
   <:col :let={gameplay} label="Game name"><%= gameplay.game_name %></:col>
   <:col :let={gameplay} label="Rental cost"><%= gameplay.rental_cost %></:col>
-  <:col :let={gameplay} label="Gameplay types"><%= gameplay.gameplay_types %></:col>
+  <:col :let={gameplay} label="Gameplay types"><%= gameplay.gameplay_types |> Enum.join(", ") %></:col>
   <:col :let={gameplay} label="Top rated"><%= gameplay.top_rated %></:col>
   <:action :let={gameplay}>
     <div class="sr-only">

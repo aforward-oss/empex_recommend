@@ -1,0 +1,18 @@
+<.header>
+  Console <%= @console.id %>
+  <:subtitle>This is a console record from your database.</:subtitle>
+  <:actions>
+    <.link href={~p"/consoles/#{@console}/edit"}>
+      <.button>Edit console</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Company name"><%= @console.company_name %></:item>
+  <:item title="Console name"><%= @console.console_name %></:item>
+  <:item title="Release date"><%= @console.release_date %></:item>
+  <:item title="Company website"><%= @console.company_website %></:item>
+</.list>
+
+<.back navigate={~p"/consoles"}>Back to consoles</.back>

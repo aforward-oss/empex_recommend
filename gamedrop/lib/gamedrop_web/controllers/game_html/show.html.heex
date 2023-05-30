@@ -1,0 +1,25 @@
+<.header>
+  Game <%= @game.id %>
+  <:subtitle>This is a game record from your database.</:subtitle>
+  <:actions>
+    <.link href={~p"/games/#{@game}/edit"}>
+      <.button>Edit game</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Game name"><%= @game.game_name %></:item>
+  <:item title="Console name"><%= @game.console_name %></:item>
+  <:item title="Release date"><%= @game.release_date %></:item>
+  <:item title="Developer"><%= @game.developer %></:item>
+  <:item title="Genre"><%= @game.genre %></:item>
+  <:item title="Difficulty"><%= @game.difficulty %></:item>
+  <:item title="Gameplay rating"><%= @game.gameplay_rating %></:item>
+  <:item title="Maturity rating"><%= @game.maturity_rating %></:item>
+  <:item title="Multiplayer"><%= @game.multiplayer %></:item>
+  <:item title="Player mode"><%= @game.player_mode %></:item>
+  <:item title="Description"><%= @game.description %></:item>
+</.list>
+
+<.back navigate={~p"/games"}>Back to games</.back>
