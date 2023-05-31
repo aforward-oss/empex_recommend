@@ -17,7 +17,8 @@ defmodule Gamedrop.Application do
       # Start Finch
       {Finch, name: Gamedrop.Finch},
       # Start the Endpoint (http/https)
-      GamedropWeb.Endpoint
+      GamedropWeb.Endpoint,
+      {Gamedrop.Ml.Predictor, []}
       # Start a worker by calling: Gamedrop.Worker.start_link(arg)
       # {Gamedrop.Worker, arg}
     ]
