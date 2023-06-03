@@ -18,6 +18,7 @@ defmodule PizzeriaWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/analytics", PageController, :analytics
     resources "/reservations", ReservationController
     resources "/orders", OrderController
   end

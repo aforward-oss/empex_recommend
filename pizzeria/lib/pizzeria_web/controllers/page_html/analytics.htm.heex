@@ -1,0 +1,40 @@
+<h1 class="text-4xl text-bold mb-4">Pizzeria Analytics</h1>
+
+<table class="min-w-full divide-y divide-gray-300">
+  <thead>
+    <tr>
+      <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Data</th>
+      <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Day</th>
+      <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"># Reservations</th>
+    </tr>
+  </thead>
+  <tbody class="divide-y divide-gray-200">
+    <%= for %{num: num, day_of_week: day_of_week, date: date} <- @reservations_by_date do %>
+      <tr>
+        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0"><%= date %></td>
+        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900"><%= day_of_week %></td>
+        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900"><%= num %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+
+<table class="min-w-full divide-y divide-gray-300">
+  <thead>
+    <tr>
+      <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Data</th>
+      <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Day</th>
+      <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"># Pizzas Served</th>
+    </tr>
+  </thead>
+  <tbody class="divide-y divide-gray-200">
+    <%= for %{num: num, day_of_week: day_of_week, date: date} <- @pizza_doughs_by_date do %>
+      <tr>
+        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0"><%= date %></td>
+        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900"><%= day_of_week %></td>
+        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900"><%= num %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
