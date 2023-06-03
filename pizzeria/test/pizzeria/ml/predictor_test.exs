@@ -25,4 +25,10 @@ defmodule Pizzeria.Ml.PredictorTest do
       assert ML.predict(2, model) == 1.0
     end
   end
+
+  describe "predict/1" do
+    test "based on stored model" do
+      assert !is_nil(ML.predict(2))
+    end
+  end
 end
