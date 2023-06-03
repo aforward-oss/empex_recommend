@@ -1,9 +1,9 @@
 defmodule Pizzeria.Analytics do
   alias Pizzeria.Repo
-  alias Pizzeria.Ml.ReservationPredictor
+  alias Pizzeria.Ml.Predictor
 
   def predict_num_doughs(num_resi) do
-    ReservationPredictor.predict(num_resi, :default)
+    Predictor.predict(num_resi, :default)
   end
 
   def reservations_by_date() do

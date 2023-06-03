@@ -1,4 +1,4 @@
-defmodule Pizzeria.Ml.ReservationPredictor do
+defmodule Pizzeria.Ml.Predictor do
   alias Pizzeria.Analytics
   alias Scholar.Linear.LinearRegression, as: LR
 
@@ -28,9 +28,8 @@ defmodule Pizzeria.Ml.ReservationPredictor do
 
   def predict(num_resi, model_type \\ :default) do
     model(model_type)
-    |> LR.predict(Nx.tensor([[num_resi]]))
-    |> Nx.to_flat_list()
-    |> List.first()
+    |> LR.predict(Nx.tensor([num_resi]))
+    |> Nx.to_number()
     |> Float.round(0)
   end
 
