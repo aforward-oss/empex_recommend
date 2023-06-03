@@ -18,7 +18,10 @@ defmodule Pizzeria.Pos do
 
   """
   def list_reservations do
-    Repo.all(Reservation)
+    from(t in Reservation,
+      order_by: [desc: t.datetime]
+    )
+    |> Repo.all()
   end
 
   @doc """
