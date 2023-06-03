@@ -2,7 +2,7 @@ defmodule Pizzeria.Ml.Predictor do
   alias Pizzeria.Analytics
   alias Scholar.Linear.LinearRegression, as: LR
 
-  @model_path "./priv/pizzeria.nx"
+  @model_path "./priv/model.nx"
   @model File.read!(@model_path) |> Nx.deserialize()
 
   def create_model() do
