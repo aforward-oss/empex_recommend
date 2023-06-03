@@ -25,6 +25,7 @@ defmodule Pizzeria.Ml.Predictor do
 
   def model(:default), do: @model
   def model(:live), do: train()
+  def model(asis), do: asis
 
   def predict(num_resi, model_type \\ :default) do
     model(model_type)
