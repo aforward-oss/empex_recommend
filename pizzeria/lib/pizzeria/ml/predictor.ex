@@ -5,7 +5,7 @@ defmodule Pizzeria.Ml.Predictor do
   @model_path "./priv/model.nx"
   @model File.read!(@model_path) |> Nx.deserialize()
 
-  def create_model() do
+  def train() do
     pizza_doughs =
       Analytics.pizza_doughs_by_date()
       |> Enum.map(&{&1.date, &1.num})
@@ -24,7 +24,7 @@ defmodule Pizzeria.Ml.Predictor do
   end
 
   def model(:default), do: @model
-  def model(:live), do: create_model()
+  def model(:live), do: train()
 
   def predict(num_resi, model_type \\ :default) do
     model(model_type)
@@ -34,7 +34,7 @@ defmodule Pizzeria.Ml.Predictor do
   end
 
   def save_model(path \\ @model_path) do
-    create_model()
+    train()
     |> Nx.serialize()
     |> then(&File.write!(path, &1))
   end
