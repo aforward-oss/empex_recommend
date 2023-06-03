@@ -63,14 +63,25 @@ defmodule Pizzeria.Pos.ResevationTest do
     end
   end
 
+  describe "num_reservations_tonight/1" do
+    test "none" do
+      assert Pizzeria.Pos.num_reservations_tonight() == 0
+    end
+
+    test "some" do
+      Pos.create_reservation(%{datetime: NaiveDateTime.utc_now(), name: "A", guests: 1})
+      assert Pizzeria.Pos.num_reservations_tonight() == 1
+    end
+  end
+
   describe "num_reservations_on/1" do
     test "none" do
       assert Pizzeria.Pos.num_reservations_on(~D[2023-06-03]) == 0
     end
 
     test "some" do
-      {:ok, _} =
-        Pos.create_reservation(%{datetime: ~N[2023-06-04 22:22:00], name: "A", guests: 1})
+      Pos.create_reservation(%{datetime: ~N[2023-06-04 22:22:00], name: "A", guests: 1})
+      assert Pizzeria.Pos.num_reservations_on(~D[2023-06-04]) == 1
 
       Pos.create_reservation(%{datetime: ~N[2023-06-04 22:22:00], name: "A", guests: 1})
       Pos.create_reservation(%{datetime: ~N[2023-06-04 22:22:00], name: "A", guests: 1})

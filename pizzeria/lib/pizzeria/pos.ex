@@ -25,6 +25,12 @@ defmodule Pizzeria.Pos do
   end
 
   @doc """
+  How many reservations tonight?
+  Based on num_reservations_on
+  """
+  def num_reservations_tonight(), do: num_reservations_on(Date.utc_today())
+
+  @doc """
   How many reservations for the provided date?
   """
   def num_reservations_on(date) when is_binary(date) do
