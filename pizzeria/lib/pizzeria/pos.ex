@@ -25,6 +25,24 @@ defmodule Pizzeria.Pos do
   end
 
   @doc """
+  How many reservations for the provided date?
+  """
+  def num_reservations_on(date) do
+    Repo.run_sql(
+      """
+      SELECT count(*)
+      FROM reservations
+      WHERE date(datetime) = $1
+      """,
+      [date]
+    )
+    |> then(& &1.rows)
+    |> case do
+      [[n]] -> n
+    end
+  end
+
+  @doc """
   Gets a single reservation.
 
   Raises `Ecto.NoResultsError` if the Reservation does not exist.

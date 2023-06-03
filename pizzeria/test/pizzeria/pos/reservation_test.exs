@@ -62,4 +62,19 @@ defmodule Pizzeria.Pos.ResevationTest do
       assert %Ecto.Changeset{} = Pos.change_reservation(reservation)
     end
   end
+
+  describe "num_reservations_on/1" do
+    test "none" do
+      assert Pizzeria.Pos.num_reservations_on(~D[2023-06-03]) == 0
+    end
+
+    test "some" do
+      {:ok, _} =
+        Pos.create_reservation(%{datetime: ~N[2023-06-04 22:22:00], name: "A", guests: 1})
+
+      Pos.create_reservation(%{datetime: ~N[2023-06-04 22:22:00], name: "A", guests: 1})
+      Pos.create_reservation(%{datetime: ~N[2023-06-04 22:22:00], name: "A", guests: 1})
+      assert Pizzeria.Pos.num_reservations_on(~D[2023-06-04]) == 3
+    end
+  end
 end
