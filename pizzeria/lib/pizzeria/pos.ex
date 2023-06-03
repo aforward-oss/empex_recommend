@@ -27,6 +27,12 @@ defmodule Pizzeria.Pos do
   @doc """
   How many reservations for the provided date?
   """
+  def num_reservations_on(date) when is_binary(date) do
+    date
+    |> Date.from_iso8601!()
+    |> num_reservations_on()
+  end
+
   def num_reservations_on(date) do
     Repo.run_sql(
       """
