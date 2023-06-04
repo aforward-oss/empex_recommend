@@ -1,63 +1,38 @@
 defmodule Gamedrop.Ml.Engine do
-  use GenServer
   alias Gamedrop.Repo
+  alias Gamedrop.Ml.Engine
+  alias Scholar.NaiveBayes.Complement, as: Algorithm
 
   @all_budgets [1, 2, 3]
 
-  def start_link(_) do
-    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
-  end
+  def predict(_, {nil, _}), do: nil
 
-  def init(_) do
-    :timer.send_after(10_000, self(), :train)
-    {:ok, {nil, nil, nil}}
-  end
-
-  def predict(budget, game_types) do
-    {:ok, answer} = GenServer.call(__MODULE__, {:predict, budget, game_types})
-    answer
-  end
-
-  def train(), do: GenServer.cast(__MODULE__, :train)
-
-  def handle_call({:predict, budget, game_types}, _from, state) do
-    result = do_prediction(budget, game_types, state)
-    {:reply, result, state}
-  end
-
-  def handle_cast(:train, _state) do
-    {:noreply, do_train()}
-  end
-
-  def handle_info(:train, _state) do
-    {:noreply, do_train()}
-  end
-
-  defp do_prediction(_, _, {nil, _, _}), do: nil
-
-  defp do_prediction(budget, game_types, {model, all_game_types, all_game_names}) do
+  def predict(features, {model, opts}) do
     x =
-      Nx.concatenate({
-        Tx.one_hot_encode(budget, @all_budgets),
-        Tx.multi_hot_encode(game_types, all_game_types)
-      })
-      |> Nx.to_list()
-      |> then(&Nx.tensor([&1]))
+      [:budget, :game_types]
+      |> Enum.map(fn f -> Map.get(features, f) || Map.get(features, "#{f}") end)
+      |> feature_to_tensor(opts)
+      |> Nx.reshape({1, :auto})
+
+    all_game_names = Keyword.get(opts, :all_game_names, [])
 
     apply(model.__struct__, :predict, [model, x])
     |> Nx.to_list()
     |> List.first()
-    |> then(&Enum.fetch(all_game_names, &1))
+    |> then(&Enum.fetch!(all_game_names, &1))
   end
 
-  def do_train() do
-    IO.puts("Training the data set")
-
+  def train() do
     all_game_types = gameplay_types()
     all_game_names = game_names()
-    num_categories = Enum.count(all_game_names) |> IO.inspect()
 
-    {x, y} =
+    opts = [
+      all_budgets: @all_budgets,
+      all_game_types: all_game_types,
+      all_game_names: all_game_names
+    ]
+
+    {x, y, num_features} =
       Repo.run_sql("""
       SELECT CASE
                  WHEN rental_cost < 5 THEN 1
@@ -71,20 +46,34 @@ defmodule Gamedrop.Ml.Engine do
       ORDER BY console_name, game_name
       """)
       |> then(& &1.rows)
-      |> Enum.map(fn [budget, game_types, game_name] ->
-        {Nx.concatenate({
-           Tx.one_hot_encode(budget, @all_budgets),
-           Tx.multi_hot_encode(game_types, all_game_types)
-         })
-         |> Nx.to_list(), Tx.category_encode(game_name, all_game_names) |> Nx.to_number()}
-      end)
-      |> Enum.reduce({[], []}, fn {features, labels}, {all_features, all_labels} ->
-        {[features | all_features], [labels | all_labels]}
-      end)
-      |> then(fn {x, y} -> {Nx.tensor(x), Nx.tensor(y)} end)
+      |> Enum.reduce({nil, nil, nil}, fn [b, t, g], {x, y, n} ->
+        features = Engine.feature_to_tensor([b, t], opts)
+        label = Tx.category_encode(g, all_game_names) |> Nx.reshape({1})
 
-    model = Scholar.NaiveBayes.Complement.fit(x, y, num_classes: num_categories)
-    {model, all_game_types, all_game_names}
+        if is_nil(x) do
+          {n} = Nx.shape(features)
+          {features, label, n}
+        else
+          {Nx.concatenate([x, features]), Nx.concatenate([y, label]), n}
+        end
+      end)
+
+    x = Nx.reshape(x, {:auto, num_features})
+    num_classes = Enum.count(all_game_names)
+
+    model = Algorithm.fit(x, y, num_classes: num_classes)
+
+    {model, opts}
+  end
+
+  def feature_to_tensor([budget, game_types], opts) do
+    all_budgets = Keyword.get(opts, :all_budgets, [])
+    all_game_types = Keyword.get(opts, :all_game_types, [])
+
+    Nx.concatenate([
+      Tx.one_hot_encode(budget, all_budgets),
+      Tx.multi_hot_encode(game_types, all_game_types, missing: :ignore)
+    ])
   end
 
   def gameplay_types() do

@@ -59,7 +59,7 @@ defmodule Tx do
 
       :other ->
         Nx.concatenate([
-          Nx.tensor(1),
+          Nx.tensor([1]),
           Nx.broadcast(0, {num_categories})
         ])
     end
