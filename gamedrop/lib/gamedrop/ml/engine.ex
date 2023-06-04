@@ -1,4 +1,4 @@
-defmodule Gamedrop.Ml.Predictor do
+defmodule Gamedrop.Ml.Engine do
   use GenServer
   alias Gamedrop.Repo
 
