@@ -1,7 +1,7 @@
 defmodule Gamedrop.Ml.EngineTest do
   use Gamedrop.DataCase, async: true
   alias Gamedrop.Ml.Engine
-  alias Gamedrop.Ml.Engine, as: ML
+  alias Gamedrop.Ml.Predictor, as: ML
   alias Gamedrop.Repo
   alias Gamedrop.Pos.Gameplay
   doctest Gamedrop.Ml.Engine

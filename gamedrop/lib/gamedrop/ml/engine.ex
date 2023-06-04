@@ -1,26 +1,9 @@
 defmodule Gamedrop.Ml.Engine do
   alias Gamedrop.Repo
-  alias Gamedrop.Ml.Engine
+  alias Gamedrop.Ml.Predictor, as: ML
   alias Scholar.NaiveBayes.Complement, as: Algorithm
 
   @all_budgets [1, 2, 3]
-
-  def predict(_, {nil, _}), do: nil
-
-  def predict(features, {model, opts}) do
-    x =
-      [:budget, :game_types]
-      |> Enum.map(fn f -> Map.get(features, f) || Map.get(features, "#{f}") end)
-      |> feature_to_tensor(opts)
-      |> Nx.reshape({1, :auto})
-
-    all_game_names = Keyword.get(opts, :all_game_names, [])
-
-    apply(model.__struct__, :predict, [model, x])
-    |> Nx.to_list()
-    |> List.first()
-    |> then(&Enum.fetch!(all_game_names, &1))
-  end
 
   def train() do
     all_game_types = gameplay_types()
@@ -47,7 +30,7 @@ defmodule Gamedrop.Ml.Engine do
       """)
       |> then(& &1.rows)
       |> Enum.reduce({nil, nil, nil}, fn [b, t, g], {x, y, n} ->
-        features = Engine.feature_to_tensor([b, t], opts)
+        features = ML.feature_to_tensor([b, t], opts)
         label = Tx.category_encode(g, all_game_names) |> Nx.reshape({1})
 
         if is_nil(x) do
@@ -64,16 +47,6 @@ defmodule Gamedrop.Ml.Engine do
     model = Algorithm.fit(x, y, num_classes: num_classes)
 
     {model, opts}
-  end
-
-  def feature_to_tensor([budget, game_types], opts) do
-    all_budgets = Keyword.get(opts, :all_budgets, [])
-    all_game_types = Keyword.get(opts, :all_game_types, [])
-
-    Nx.concatenate([
-      Tx.one_hot_encode(budget, all_budgets),
-      Tx.multi_hot_encode(game_types, all_game_types, missing: :ignore)
-    ])
   end
 
   def gameplay_types() do
@@ -96,5 +69,33 @@ defmodule Gamedrop.Ml.Engine do
     """)
     |> then(& &1.rows)
     |> Enum.map(&List.first/1)
+  end
+
+  def save_if(model_state, filename) do
+    if File.exists?(filename) do
+      save(model_state, filename)
+    end
+
+    model_state
+  end
+
+  def save({model, opts}, filename) do
+    {Nx.serialize(model), opts}
+    |> :erlang.term_to_binary()
+    |> then(&File.write!(filename, &1))
+  end
+
+  def load_if(filename) do
+    if File.exists?(filename) do
+      load(filename)
+    else
+      ML.model_state()
+    end
+  end
+
+  def load(filename) do
+    File.read!(filename)
+    |> :erlang.binary_to_term()
+    |> then(fn {model, opts} -> {Nx.deserialize(model), opts} end)
   end
 end
