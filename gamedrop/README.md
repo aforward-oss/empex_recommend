@@ -1,18 +1,24 @@
 # Gamedrop
 
-To start your Phoenix server:
+## Setup
 
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+You can build a new application with
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+```
+mix setup
+```
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+A small dataset for the EMPEX web application
 
-## Learn more
+```
+mix run ./priv/repo/seeds.exs
+```
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+## Livebook
+
+To run with `./notebooks/gamedrop_app.livemd` (for example), start with
+the following cookie value
+
+```
+iex --sname gamedrop --cookie gamedropcookie -S mix phx.server
+```
