@@ -38,14 +38,6 @@ Nx.global_default_backend(EXLA.Backend)
 df = DF.new(x: x, y: y)
 ```
 
-<!-- livebook:{"output":true} -->
-
-```
-
-10:35:18.387 [info] TfrtCpuClient created.
-
-```
-
 ## Visualize Data
 
 ```elixir
@@ -58,7 +50,7 @@ Vl.new(
   height: 630
 )
 |> Vl.data_from_values(df)
-|> Vl.mark(:circle)
+|> Vl.mark(:circle, size: 500)
 |> Vl.encode_field(:x, "x",
   type: :quantitative,
   scale: [domain: [0, 20]],
@@ -70,7 +62,7 @@ Vl.new(
 <!-- livebook:{"output":true} -->
 
 ```vega-lite
-{"$schema":"https://vega.github.io/schema/vega-lite/v5.json","data":{"values":[{"x":1,"y":3},{"x":2,"y":5},{"x":3,"y":7},{"x":5,"y":11},{"x":10,"y":20},{"x":15,"y":32},{"x":20,"y":41}]},"encoding":{"x":{"axis":{"grid":false},"field":"x","scale":{"domain":[0,20]},"type":"quantitative"},"y":{"axis":{"grid":false},"field":"y","scale":{"domain":[0,50]},"type":"quantitative"}},"height":630,"mark":"circle","title":{"offset":20,"text":"Scatterplot of 2x + 1 Approximation"},"width":630}
+{"$schema":"https://vega.github.io/schema/vega-lite/v5.json","data":{"values":[{"x":1,"y":3},{"x":2,"y":5},{"x":3,"y":7},{"x":5,"y":11},{"x":10,"y":20},{"x":15,"y":32},{"x":20,"y":41}]},"encoding":{"x":{"axis":{"grid":false},"field":"x","scale":{"domain":[0,20]},"type":"quantitative"},"y":{"axis":{"grid":false},"field":"y","scale":{"domain":[0,50]},"type":"quantitative"}},"height":630,"mark":{"size":500,"type":"circle"},"title":{"offset":20,"text":"Scatterplot of 2x + 1 Approximation"},"width":630}
 ```
 
 ## Create Model
@@ -87,12 +79,12 @@ model = Scholar.Linear.LinearRegression.fit(x, y)
 %Scholar.Linear.LinearRegression{
   coefficients: #Nx.Tensor<
     f32[1]
-    EXLA.Backend<host:0, 0.1890482273.3407216656.25198>
+    EXLA.Backend<host:0, 0.3991955462.621936656.188650>
     [2.015822410583496]
   >,
   intercept: #Nx.Tensor<
     f32
-    EXLA.Backend<host:0, 0.1890482273.3407216656.25201>
+    EXLA.Backend<host:0, 0.3991955462.621936656.188652>
     0.8734207153320312
   >
 }
@@ -122,7 +114,7 @@ Vl.new(
 |> Vl.layers([
   Vl.new()
   |> Vl.data_from_values(df)
-  |> Vl.mark(:circle)
+  |> Vl.mark(:circle, size: 500)
   |> Vl.encode_field(:x, "x",
     type: :quantitative,
     scale: [domain: [0, 20]],
@@ -144,7 +136,7 @@ Vl.new(
 <!-- livebook:{"output":true} -->
 
 ```vega-lite
-{"$schema":"https://vega.github.io/schema/vega-lite/v5.json","height":630,"layer":[{"data":{"values":[{"x":1,"y":3},{"x":2,"y":5},{"x":3,"y":7},{"x":5,"y":11},{"x":10,"y":20},{"x":15,"y":32},{"x":20,"y":41}]},"encoding":{"x":{"axis":{"grid":false},"field":"x","scale":{"domain":[0,20]},"type":"quantitative"},"y":{"axis":{"grid":false},"field":"y","scale":{"domain":[0,50]},"type":"quantitative"}},"mark":"circle"},{"data":{"values":[{"x":0,"y":0.8734207153320312},{"x":20,"y":41.18986892700195}]},"encoding":{"x":{"field":"x","scale":{"domain":[0,20]},"type":"quantitative"},"y":{"field":"y","scale":{"domain":[0,50]},"type":"quantitative"}},"mark":{"color":"green","type":"line"}}],"title":{"offset":20,"text":"Scatterplot of Generated Data"},"width":630}
+{"$schema":"https://vega.github.io/schema/vega-lite/v5.json","height":630,"layer":[{"data":{"values":[{"x":1,"y":3},{"x":2,"y":5},{"x":3,"y":7},{"x":5,"y":11},{"x":10,"y":20},{"x":15,"y":32},{"x":20,"y":41}]},"encoding":{"x":{"axis":{"grid":false},"field":"x","scale":{"domain":[0,20]},"type":"quantitative"},"y":{"axis":{"grid":false},"field":"y","scale":{"domain":[0,50]},"type":"quantitative"}},"mark":{"size":500,"type":"circle"}},{"data":{"values":[{"x":0,"y":0.8734207153320312},{"x":20,"y":41.18986892700195}]},"encoding":{"x":{"field":"x","scale":{"domain":[0,20]},"type":"quantitative"},"y":{"field":"y","scale":{"domain":[0,50]},"type":"quantitative"}},"mark":{"color":"green","type":"line"}}],"title":{"offset":20,"text":"Scatterplot of Generated Data"},"width":630}
 ```
 
 ```elixir

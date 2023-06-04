@@ -1,0 +1,103 @@
+# Pizzera Web App
+
+```elixir
+alias Pizzeria.Ml.Engine
+alias Pizzeria.Ml.Predictor, as: ML
+alias VegaLite, as: Vl
+require Explorer.DataFrame, as: DF
+require Explorer.Series, as: S
+:ok
+```
+
+## Training The Data
+
+We have, for example 31 days of data (Jan 1 - 31).  We will split our data into a training set into two, the most often used splits are 80/20, 90/10, and 67/33.  We will pick 80/20.
+
+```elixir
+traindata = Engine.dataset({~D[2023-01-01], ~D[2023-01-24]})
+testdata = Engine.dataset({~D[2023-01-25], ~D[2023-01-31]})
+```
+
+## Visualize the Data
+
+```elixir
+{x, y} = traindata
+df = DF.new(x: x, y: y)
+
+{testx, testy} = testdata
+traindf = DF.new(x: testx, y: testy)
+
+Vl.new(
+  title: [text: "Pizza Dough Approximation"],
+  width: 630,
+  height: 630
+)
+|> Vl.data_from_values(df)
+|> Vl.mark(:circle, color: :blue, size: 500)
+|> Vl.encode_field(:x, "x", type: :quantitative)
+|> Vl.encode_field(:y, "y", type: :quantitative)
+```
+
+## Train The Data
+
+```elixir
+model = Engine.train(traindata)
+```
+
+## Visualize The Model
+
+```elixir
+{x, y} = traindata
+df = DF.new(x: x, y: y)
+
+{testx, testy} = testdata
+traindf = DF.new(x: testx, y: testy)
+
+[intercept] = Nx.to_flat_list(model.intercept)
+[coefficients] = Nx.to_flat_list(model.coefficients)
+x_1 = 0
+x_2 = 50
+
+line = %{
+  x: [x_1, x_2],
+  y: [x_1 * coefficients + intercept, x_2 * coefficients + intercept]
+}
+
+Vl.new(
+  title: [text: "Pizza Dough Approximation"],
+  width: 630,
+  height: 630
+)
+|> Vl.layers([
+  Vl.new()
+  |> Vl.data_from_values(df)
+  |> Vl.mark(:circle, color: :blue)
+  |> Vl.encode_field(:x, "x", type: :quantitative)
+  |> Vl.encode_field(:y, "y", type: :quantitative),
+  Vl.new()
+  |> Vl.data_from_values(traindf)
+  |> Vl.mark(:square, color: :red)
+  |> Vl.encode_field(:x, "x", type: :quantitative)
+  |> Vl.encode_field(:y, "y", type: :quantitative),
+  Vl.new()
+  |> Vl.data_from_values(line)
+  |> Vl.mark(:line, color: :green, weight: 2)
+  |> Vl.encode_field(:x, "x", type: :quantitative)
+  |> Vl.encode_field(:y, "y", type: :quantitative)
+])
+```
+
+## Evaluate The Model
+
+Using Mean Average Error, we can see how well the model fits.
+
+```elixir
+alias Scholar.Linear.LinearRegression, as: LR
+{features, labels} = testdata
+
+model
+|> LR.predict(features)
+|> Nx.subtract(labels)
+|> Nx.abs()
+|> Nx.mean()
+```
