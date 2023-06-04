@@ -21,28 +21,49 @@ defmodule Tx do
       raw_value = value
       map = Enum.with_index(set) |> Enum.into(%{})
       num_categories = Enum.count(map)
-      value = Map.get(map, value, -1) + 1
-      is_strict = Keyword.get(opts, :strict, true)
+      value = Map.get(map, raw_value, -1) + 1
+      missing_mode = Keyword.get(opts, :missing, :error)
 
-      set =
-        case {is_strict, value} do
-          {true, 0} ->
-            raise "Missing #{raw_value} in #{Enum.join(set, ", ")}"
+      case {missing_mode, value} do
+        {:error, 0} ->
+          raise "Missing #{raw_value} in #{Enum.join(set, ", ")}"
 
-          {true, _value} ->
-            Enum.to_list(1..num_categories)
+        {:ignore, 0} ->
+          Nx.broadcast(0, {num_categories})
 
-          {false, _value} ->
-            Enum.to_list(0..num_categories)
-        end
+        {:other, _} ->
+          do_encode(value, Enum.to_list(0..num_categories))
 
-      do_encode(value, set)
+        {_, value} ->
+          do_encode(value, Enum.to_list(1..num_categories))
+      end
     else
       do_encode(value, set)
     end
   end
 
   def multi_hot_encode(values, set), do: multi_hot_encode(values, set, [])
+
+  def multi_hot_encode(nil, set, opts), do: multi_hot_encode([], set, opts)
+
+  def multi_hot_encode([], set, opts) do
+    num_categories = Enum.count(set)
+    missing_mode = Keyword.get(opts, :missing, :ignore)
+
+    case missing_mode do
+      :error ->
+        raise "No values provided, at least one of #{Enum.join(set, ", ")} expected"
+
+      :ignore ->
+        Nx.broadcast(0, {num_categories})
+
+      :other ->
+        Nx.concatenate([
+          Nx.tensor(1),
+          Nx.broadcast(0, {num_categories})
+        ])
+    end
+  end
 
   def multi_hot_encode(values, set, opts) do
     values
