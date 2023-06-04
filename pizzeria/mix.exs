@@ -34,6 +34,10 @@ defmodule Pizzeria.MixProject do
     [
       {:nx, "~> 0.5"},
       {:scholar, "~> 0.1"},
+      {:explorer, "~> 0.5.6"},
+      {:kino_vega_lite, "~> 0.1.8"},
+      {:kino, "~> 0.9.0"},
+      {:kino_explorer, "~> 0.1.6"},
       {:phoenix, "~> 1.7.2"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.6"},
