@@ -14,13 +14,22 @@ defmodule GamedropWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :admin_layout do
+    plug :put_layout, html: {GamedropWeb.Layouts, :admin}
+  end
+
   scope "/", GamedropWeb do
-    pipe_through :browser
-    get "/", PageController, :home
-    get "/a/", PageController, :admin
+    pipe_through [:browser, :admin_layout]
+    get "/a", PageController, :admin
     resources "/gameplays", GameplayController
     resources "/consoles", ConsoleController
     resources "/games", GameController
+  end
+
+  scope "/", GamedropWeb do
+    pipe_through :browser
+    live "/", GameIdeaLive
+    live "/a/:game", GameIdeaLive
   end
 
   # Other scopes may use custom stacks.

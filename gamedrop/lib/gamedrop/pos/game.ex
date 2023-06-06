@@ -21,7 +21,41 @@ defmodule Gamedrop.Pos.Game do
   @doc false
   def changeset(game, attrs) do
     game
-    |> cast(attrs, [:game_name, :console_name, :release_date, :developer, :genre, :difficulty, :gameplay_rating, :maturity_rating, :multiplayer, :player_mode, :description])
-    |> validate_required([:game_name, :console_name, :release_date, :developer, :genre, :difficulty, :gameplay_rating, :maturity_rating, :multiplayer, :player_mode, :description])
+    |> cast(attrs, [
+      :game_name,
+      :console_name,
+      :release_date,
+      :developer,
+      :genre,
+      :difficulty,
+      :gameplay_rating,
+      :maturity_rating,
+      :multiplayer,
+      :player_mode,
+      :description
+    ])
+    |> validate_required([
+      :game_name,
+      :console_name,
+      :release_date,
+      :developer,
+      :genre,
+      :difficulty,
+      :gameplay_rating,
+      :maturity_rating,
+      :multiplayer,
+      :player_mode,
+      :description
+    ])
+  end
+
+  def slug(%{game_name: name}) do
+    name
+    |> String.downcase()
+    |> String.replace(" ", "-")
+    |> String.replace(".", "")
+    |> String.replace(":", "")
+    |> String.replace("'", "")
+    |> String.replace("!", "")
   end
 end

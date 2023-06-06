@@ -4,11 +4,51 @@ defmodule Gamedrop.Migrations.Consoles do
   def run() do
     consoles()
     atari_games()
-    atari_gameplays()
     nes_games()
     nes_gameplays()
-    switch_gameplays()
+    # atari_gameplays()
+    # switch_gameplays()
+    gameplays()
+    Gamedrop.Ml.Worker.refresh()
     :ok
+  end
+
+  def gameplays() do
+    Repo.delete_all(Gamedrop.Pos.Gameplay)
+
+    "./priv/repo/gameplays.csv"
+    |> File.stream!()
+    |> CSV.decode(headers: true)
+    |> Enum.each(fn {:ok, data} ->
+      gameplay_types =
+        Map.get(data, "gameplay_types", "[]")
+        |> String.replace("[", "")
+        |> String.replace("]", "")
+        |> String.replace("'", "")
+        |> String.split(",")
+        |> Enum.map(&String.trim/1)
+        |> Enum.map(fn item -> String.trim(item, "\\'") end)
+
+      console_name =
+        case Map.get(data, "console_name", "") do
+          "" -> "TBD"
+          found -> found
+        end
+
+      data
+      |> Map.put("gameplay_types", gameplay_types)
+      |> Map.put("console_name", console_name)
+      |> Map.put("top_rated", true)
+      |> Gamedrop.Pos.create_gameplay()
+      |> case do
+        {:ok, _} ->
+          :ok
+
+        {:error, changeset} ->
+          IO.puts(data["game_name"])
+          IO.inspect(changeset.errors)
+      end
+    end)
   end
 
   def consoles() do

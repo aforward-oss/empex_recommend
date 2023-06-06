@@ -33,7 +33,7 @@ defmodule Gamedrop.Ml.Predictor do
 
     Nx.concatenate([
       Tx.one_hot_encode(budget, all_budgets),
-      Tx.multi_hot_encode(game_types, all_game_types, missing: :ignore)
+      Tx.multi_hot_encode(game_types, all_game_types)
     ])
   end
 end

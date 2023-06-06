@@ -35,6 +35,7 @@ defmodule Gamedrop.MixProject do
       {:nx, "~> 0.5.3"},
       {:scholar, "~> 0.1"},
       {:explorer, "~> 0.5.6"},
+      {:csv, "~> 2.0"},
       {:phoenix, "~> 1.7.2"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.6"},

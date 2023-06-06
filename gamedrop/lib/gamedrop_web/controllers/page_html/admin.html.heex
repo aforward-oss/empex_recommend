@@ -1,20 +1,11 @@
 <div class="my-2">
-  <h2 class="text-lg font-bold">Admin</h2>
-  <ul>
-    <li>
-      <a href={~p"/gameplays"} class="text-sky-500 underline">
-        GamePlays
-      </a>
-    </li>
-    <li>
-      <a href={~p"/consoles"} class="text-sky-500 underline">
-        Consoles
-      </a>
-    </li>
-    <li>
-      <a href={~p"/games"} class="text-sky-500 underline">
-        Games
-      </a>
-    </li>
-  </ul>
+  <div class="grid grid-cols-4 gap-4">
+    <%= for game <- @all_game_names do %>
+      <div>
+        <h2><%= game %></h2>
+        <img src={GamedropWeb.GameIdeaLive.game_image_src(game)} />
+      </div>
+    <% end %>
+  </div>
+
 </div>

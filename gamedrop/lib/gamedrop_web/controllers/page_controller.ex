@@ -8,6 +8,10 @@ defmodule GamedropWeb.PageController do
   end
 
   def admin(conn, _params) do
-    render(conn, :admin)
+    all_game_names = Gamedrop.Pos.list_gameplays() |> Enum.map(& &1.game_name)
+
+    conn
+    |> assign(:all_game_names, all_game_names)
+    |> render(:admin)
   end
 end

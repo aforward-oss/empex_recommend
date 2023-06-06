@@ -1,0 +1,93 @@
+game_name,release_year,console_name,rating,rental_cost,genres,gameplay_types
+Ms. Pac-Man,1982,Atari 2600,3.6,4.99,['Arcade'],['Arcade']
+Metroid II: Return of Samus,1991,Gameboy,3.1,3.99,"['Adventure', 'Platform', 'Shooter']","['Adventure', 'Platform', 'Shooter']"
+Kirby's Dream Land,1992,Gameboy,3.2,3.99,['Platform'],['Platform']
+Wario Land 3,2000,Gameboy,3.8,6.99,"['Adventure', 'Platform', 'Puzzle']","['Adventure', 'Platform', 'Puzzle']"
+Animal Crossing,2002,Gamecube,3.9,7.99,['Simulator'],['Simulator']
+Metroid Prime,2002,Gamecube,4.3,27.99,"['Adventure', 'Platform', 'Shooter']","['Adventure', 'Platform', 'Shooter']"
+Super Smash Bros.,1999,N64,3.4,3.99,"['Fighting', 'Platform']","['Fighting', 'Platform']"
+GoldenEye 007,1997,N64,3.6,4.99,['Shooter'],['Shooter']
+F-Zero,1990,Super NES,3.9,7.99,"['Arcade', 'Racing']","['Arcade', 'Racing']"
+Super Mario 64,1996,N64,4.1,18.99,"['Adventure', 'Platform']","['Adventure', 'Platform']"
+The Legend of Zelda: Ocarina of Time,1998,N64,4.3,27.99,"['Adventure', 'RPG']","['Adventure', 'RPG']"
+Zelda II: The Adventure of Link,1987,NES,2.6,2.99,"['Adventure', 'RPG']","['Adventure', 'RPG']"
+Mega Man,1987,NES,2.8,2.99,"['Adventure', 'Platform']","['Adventure', 'Platform']"
+Metal Gear,1987,NES,2.9,2.99,"['Adventure', 'Shooter']","['Adventure', 'Shooter']"
+Dragon Quest,1986,NES,3.1,3.99,"['Adventure', 'RPG']","['Adventure', 'RPG']"
+Super Mario Bros. 2,1988,NES,3.1,3.99,"['Adventure', 'Platform']","['Adventure', 'Platform']"
+The Legend of Zelda,1986,NES,3.2,3.99,['Adventure'],['Adventure']
+Bubble Bobble,1986,NES,3.3,3.99,"['Arcade', 'Platform', 'Puzzle', 'Strategy']","['Arcade', 'Platform', 'Puzzle', 'Strategy']"
+Castlevania,1986,NES,3.4,3.99,"['Adventure', 'Platform']","['Adventure', 'Platform']"
+Mega Man 3,1990,NES,3.4,3.99,"['Adventure', 'Platform']","['Adventure', 'Platform']"
+Super Mario Bros.,1985,NES,3.5,3.99,"['Adventure', 'Platform']","['Adventure', 'Platform']"
+Kirby's Adventure,1993,NES,3.6,4.99,['Platform'],['Platform']
+Mega Man 2,1989,NES,3.6,4.99,"['Adventure', 'Platform']","['Adventure', 'Platform']"
+Super Mario Bros. 3,1988,NES,4.0,8.99,['Platform'],['Platform']
+Tetris,1989,Gameboy,4.1,18.99,"['Arcade', 'Puzzle']","['Arcade', 'Puzzle']"
+The Simpsons: Road Rage,2001,PS2,2.9,2.99,['Racing'],['Racing']
+Grand Theft Auto III,2001,PS2,3.3,3.99,"['Adventure', 'Racing', 'Shooter', 'Simulator']","['Adventure', 'Racing', 'Shooter', 'Simulator']"
+Max Payne,2001,PS2,3.9,7.99,['Shooter'],['Shooter']
+Grand Theft Auto,1997,PSOne,2.5,2.99,"['Adventure', 'Racing', 'Shooter']","['Adventure', 'Racing', 'Shooter']"
+Twisted Metal,1995,PSOne,3.1,3.99,"['Fighting', 'Racing', 'Shooter']","['Fighting', 'Racing', 'Shooter']"
+Resident Evil,1996,PSOne,3.7,5.99,"['Adventure', 'Puzzle']","['Adventure', 'Puzzle']"
+Tekken,1995,PSOne,3.9,7.99,['Fighting'],['Fighting']
+Final Fantasy VII,1997,PSOne,4.2,21.99,"['Adventure', 'RPG', 'Turn Based Strategy']","['Adventure', 'RPG', 'Turn Based Strategy']"
+Metal Gear Solid,1998,PSOne,4.2,21.99,"['Adventure', 'Tactical']","['Adventure', 'Tactical']"
+Final Fantasy IX,2000,PSOne,4.3,27.99,"['RPG', 'Turn Based Strategy']","['RPG', 'Turn Based Strategy']"
+Sonic the Hedgehog,1991,Sega Genesis,3.1,3.99,['Platform'],['Platform']
+Sonic the Hedgehog 2,1992,Sega Genesis,3.7,5.99,"['Adventure', 'Platform']","['Adventure', 'Platform']"
+Street Fighter II,1991,Super NES,3.5,3.99,"['Arcade', 'Fighting']","['Arcade', 'Fighting']"
+NBA Jam,1993,Super NES,3.6,4.99,['Sport'],['Sport']
+Final Fantasy IV,1991,Super NES,3.7,5.99,['RPG'],['RPG']
+Donkey Kong Country,1994,Super NES,3.9,7.99,"['Adventure', 'Platform']","['Adventure', 'Platform']"
+The Legend of Zelda: A Link to the Past,1991,Super NES,4.1,18.99,"['Adventure', 'Puzzle', 'RPG']","['Adventure', 'Puzzle', 'RPG']"
+Super Mario World,1990,Super NES,4.2,21.99,"['Adventure', 'Platform']","['Adventure', 'Platform']"
+Quake II,1999,XBox 360,3.4,3.99,['Shooter'],['Shooter']
+Call of Duty 3,2006,PS2,2.8,2.99,['Shooter'],['Shooter']
+Super Mario Party,2018,,2.8,2.99,"['Card & Board Game', 'Platform', 'Puzzle']","['Card & Board Game', 'Platform', 'Puzzle']"
+Prince of Persia,1992,Super NES,3.0,3.99,"['Adventure', 'Platform', 'Puzzle']","['Adventure', 'Platform', 'Puzzle']"
+The Simpsons Game,2007,PSOne,3.0,3.99,['Platform'],['Platform']
+Final Fantasy III,2006,,3.1,3.99,"['Adventure', 'RPG']","['Adventure', 'RPG']"
+Need for Speed,2015,PS4,3.1,3.99,"['Adventure', 'Racing', 'Sport']","['Adventure', 'Racing', 'Sport']"
+FIFA 13,2012,PS2,3.2,3.99,"['Simulator', 'Sport']","['Simulator', 'Sport']"
+Tom Clancy's Rainbow Six,1999,PSOne,3.2,3.99,"['Shooter', 'Tactical']","['Shooter', 'Tactical']"
+Gears of War,2006,Xbox,3.5,3.99,['Shooter'],['Shooter']
+Hogwarts Legacy,2023,Xbox,3.5,3.99,"['Adventure', 'RPG']","['Adventure', 'RPG']"
+Super Mario Kart,1992,Super NES,3.5,3.99,['Racing'],['Racing']
+Tomb Raider,1996,,3.5,3.99,"['Adventure', 'Platform', 'Puzzle', 'Shooter']","['Adventure', 'Platform', 'Puzzle', 'Shooter']"
+Left 4 Dead,2008,,3.6,4.99,['Shooter'],['Shooter']
+Mortal Kombat II,1994,Super NES,3.6,4.99,['Fighting'],['Fighting']
+Super Mario Maker 2,2019,,3.7,5.99,['Platform'],['Platform']
+Wii Sports,2006,Wii,3.7,5.99,"['Simulator', 'Sport']","['Simulator', 'Sport']"
+Grand Theft Auto IV,2008,PS3,3.8,6.99,"['Adventure', 'Racing', 'Shooter']","['Adventure', 'Racing', 'Shooter']"
+Super Paper Mario,2007,Wii,3.8,6.99,"['Adventure', 'Platform', 'RPG']","['Adventure', 'Platform', 'RPG']"
+Teenage Mutant Ninja Turtles,1989,NES,3.8,6.99,"['Arcade', 'Brawler']","['Arcade', 'Brawler']"
+Guitar Hero III: Legends of Rock,2007,,3.9,7.99,"['Music', 'Simulator']","['Music', 'Simulator']"
+The Legend of Zelda: Link's Awakening,2019,NES,3.9,7.99,['Adventure'],['Adventure']
+Hitman 2,2018,PS4,4.0,8.99,"['Adventure', 'Shooter', 'Tactical']","['Adventure', 'Shooter', 'Tactical']"
+Return to Monkey Island,2022,,4.0,8.99,"['Adventure', 'Point-and-Click', 'Puzzle']","['Adventure', 'Point-and-Click', 'Puzzle']"
+Yakuza 2,2006,,4.0,8.99,"['Adventure', 'Brawler', 'RPG', 'Simulator', 'Sport']","['Adventure', 'Brawler', 'RPG', 'Simulator', 'Sport']"
+Cuphead,2017,Switch,4.1,18.99,"['Arcade', 'Indie', 'Platform', 'Shooter']","['Arcade', 'Indie', 'Platform', 'Shooter']"
+Grand Theft Auto: San Andreas,2004,PS2,4.1,18.99,"['Adventure', 'Racing', 'Shooter']","['Adventure', 'Racing', 'Shooter']"
+Kid Icarus,1986,NES,4.1,18.99,"['Brawler', 'Shooter']","['Brawler', 'Shooter']"
+Splatoon 3,2022,Switch,4.1,18.99,"['Platform', 'Shooter']","['Platform', 'Shooter']"
+Super Smash Bros. Ultimate,2018,Switch,4.1,18.99,"['Fighting', 'Platform']","['Fighting', 'Platform']"
+Tony Hawk's Underground,2003,PS2,4.1,18.99,"['Simulator', 'Sport']","['Simulator', 'Sport']"
+Half-Life 2,2004,Xbox,4.2,21.99,['Shooter'],['Shooter']
+Halo 3,2007,Xbox,4.2,21.99,['Shooter'],['Shooter']
+Red Dead Redemption,2010,Xbox,4.2,21.99,"['Adventure', 'RPG', 'Shooter']","['Adventure', 'RPG', 'Shooter']"
+Super Mario Odyssey,2017,,4.2,21.99,"['Adventure', 'Platform']","['Adventure', 'Platform']"
+The Last of Us,2013,PS3,4.2,21.99,"['Adventure', 'Shooter']","['Adventure', 'Shooter']"
+Metroid Dread,2021,Switch,4.3,27.99,"['Adventure', 'Platform']","['Adventure', 'Platform']"
+Ninja Gaiden,1988,NES,4.3,27.99,"['Adventure', 'Brawler']","['Adventure', 'Brawler']"
+Super Mario Galaxy,2007,Wii,4.3,27.99,"['Adventure', 'Platform']","['Adventure', 'Platform']"
+The Legend of Zelda: Breath of the Wild,2017,,4.4,31.99,"['Adventure', 'RPG']","['Adventure', 'RPG']"
+Elden Ring,2022,PS5,4.5,31.99,"['Adventure', 'RPG']","['Adventure', 'RPG']"
+The Legend of Zelda: Tears of the Kingdom,2023,,4.6,36.99,"['Adventure', 'RPG']","['Adventure', 'RPG']"
+Space Invaders,1980,Atari 2600,3.8,3.99,"['Shooter']","['Shooter']"
+Pitfall!,1982,Atari 2600,4.1,2.99,"['Platform']","['Platform']"
+Frogger,1982,Atari 2600,3.5,3.49,"['Arcade']","['Arcade']"
+Asteroids,1981,Atari 2600,3.6,2.99,"['Shooter']","['Shooter']"
+Donkey Kong,1982,Atari 2600,3.4,3.49,"['Platform']","['Platform']"
+Centipede,1982,Atari 2600,3.3,3.99,"['Shooter']","['Shooter']"
+Defender,1981,Atari 2600,3.2,2.99,"['Shooter']","['Shooter']"

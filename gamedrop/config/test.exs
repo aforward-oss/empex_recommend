@@ -1,5 +1,8 @@
 import Config
 
+config :gamedrop,
+  calculating_sleep: 10
+
 # Configure your database
 #
 # The MIX_TEST_PARTITION environment variable can be used

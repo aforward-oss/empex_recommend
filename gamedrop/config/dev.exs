@@ -1,5 +1,8 @@
 import Config
 
+config :gamedrop,
+  calculating_sleep: 10
+
 # Configure your database
 config :gamedrop, Gamedrop.Repo,
   username: "postgres",
