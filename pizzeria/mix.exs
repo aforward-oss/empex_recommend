@@ -32,8 +32,8 @@ defmodule Pizzeria.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:nx, "~> 0.5"},
-      {:scholar, "~> 0.1"},
+      {:nx, github: "elixir-nx/nx", sparse: "nx", override: true},
+      {:scholar, github: "elixir-nx/scholar", branch: "main"},
       {:explorer, "~> 0.5.6"},
       {:kino_vega_lite, "~> 0.1.8"},
       {:kino, "~> 0.9.0"},

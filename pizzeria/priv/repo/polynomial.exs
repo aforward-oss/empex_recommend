@@ -1,6 +1,6 @@
 # Run this script using
 #
-#     mix run priv/repo/training.exs
+#     mix run priv/repo/polynomial.exs
 #
 
 alias Pizzeria.Repo
@@ -32,10 +32,27 @@ sample_names = [
   "Elizabeth"
 ]
 
-for n <- 1..31 do
-  day = String.pad_leading("#{n}", 2, "0") |> IO.inspect()
-  {:ok, datetime} = NaiveDateTime.from_iso8601("2023-01-#{day}T07:00:00")
-  num_resi = :rand.uniform(51) - 1
+dates = [
+  {1, 31},
+  {2, 28},
+  {3, 31},
+  {4, 30},
+  {5, 31},
+  {6, 30},
+  {7, 31},
+  {8, 31},
+  {9, 30},
+  {10, 31},
+  {11, 30},
+  {12, 31}
+]
+
+for {m, d} <- dates,
+    n <- 1..d do
+  month = String.pad_leading("#{m}", 2, "0")
+  day = String.pad_leading("#{n}", 2, "0")
+  {:ok, datetime} = NaiveDateTime.from_iso8601("2023-#{month}-#{day}T07:00:00")
+  num_resi = :rand.uniform(60) - 1
 
   if num_resi > 0 do
     for _ <- 1..num_resi do
@@ -46,10 +63,10 @@ for n <- 1..31 do
       })
     end
 
-    weight = 2 + (:random.uniform() * 0.6 - 0.3)
-    bias = 5 + (:random.uniform() * 0.8 - 0.4)
+    weight = 10 + (:random.uniform() * 0.1 - 0.5)
+    bias = 15 + (:random.uniform() * 2.0 - 1.0)
 
-    num_pizzas = round(weight * num_resi + bias)
+    num_pizzas = round(weight * :math.log2(num_resi) + bias) |> IO.inspect()
 
     if !is_nil(num_pizzas) do
       for _ <- 1..num_pizzas do
