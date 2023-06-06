@@ -4,13 +4,19 @@ defmodule GamedropWeb.GameIdeaLive do
   alias Gamedrop.Pos.Game
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
     ml_opts = Worker.opts()
+
+    {game, step} =
+      case Map.get(params, "game") do
+        nil -> {nil, :input}
+        provided -> {provided, :suggestion}
+      end
 
     socket
     |> assign(:all_game_types, ml_opts[:all_game_types])
-    |> assign_game(nil)
-    |> assign(:step, :input)
+    |> assign_game(game)
+    |> assign(:step, step)
     |> reply(:ok)
   end
 
@@ -134,29 +140,44 @@ defmodule GamedropWeb.GameIdeaLive do
 
   def render_suggestion(assigns) do
     ~H"""
-    <body class="bg-white antialiased">
-      <div class="relative isolate overflow-hidden bg-white">
-        <div class="mx-auto md:flex md:items-center max-w-7xl px-6 pb-24 pt-10 sm:pb-32 lg:flex lg:px-8 lg:py-32">
-          <div class="mx-auto max-w-2xl px-8 lg:mx-0 lg:max-w-xl lg:flex-shrink-0">
-            <h1 class="text-4xl font-bold tracking-tight text-gray-900 ">
-              <%= @game %>
-            </h1>
-            <p class="mt-6 text-lg leading-8 text-gray-600">
-              <a href="https://giftbetter.co">Gift Better Co.</a>
-              makes it effortless for teams to customize gifts for clients, prospects, employees, or special projects.
-            </p>
-            <div class="mt-6 grid grid-1">
-              <button
-                phx-click="change_criteria"
-                class="w-full px-3.5 py-2.5 underline text-base text-center font-semibold text-gray-400 hover:text-violet-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600"
+    <body class={"#{assigns[:css_body_class] || "bg-white antialiased"}"}>
+      <div class="bg-white">
+        <div class="relative">
+          <div class="mx-auto max-w-7xl">
+            <div class="relative z-10 pt-14 lg:w-full lg:max-w-2xl lg:h-screen">
+              <svg
+                class="absolute inset-y-0 right-8 hidden h-full w-80 translate-x-1/2 transform fill-white lg:block"
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+                aria-hidden="true"
               >
-                Change my criteria
-              </button>
+                <polygon points="0,0 90,0 50,100 0,100" />
+              </svg>
+
+              <div class="relative px-6 pt-0 pb-10 sm:py-40 lg:px-8 lg:py-56 lg:pr-0 text-right">
+                <div class="mx-auto max-w-2xl lg:mx-0 lg:max-w-xl">
+                  <h2 class="text-xl font-bold tracking-tight text-gray-400 sm:text-2xl">
+                    Gamedrop Tavern recommends
+                  </h2>
+                  <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+                    <%= @game %>
+                  </h1>
+                  <button
+                    phx-click="change_criteria"
+                    class="py-2.5 underline text-base font-semibold text-sky-600 hover:text-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+                  >
+                    Change my criteria
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="mx-auto mt-10 lg:mt-0 grid grid-1 justify-center items-center">
-            <img src={game_image_src(@game)} class="drop-shadow-2xl rounded-2xl" />
-            <p class="text-center"><%= @game %></p>
+          <div class="bg-gray-50 lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
+            <img
+              class="h-full w-full lg:aspect-[3/2] object-cover lg:aspect-auto lg:h-full lg:w-full"
+              src={game_image_src(@game)}
+              alt=""
+            />
           </div>
         </div>
       </div>
