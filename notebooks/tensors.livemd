@@ -54,3 +54,20 @@ named_columns = Nx.tensor([[0, 1], [1, 3], [2, 5]], names: [:rows, :cols])
 
 {implicit_bool, named_columns}
 ```
+
+## Tensor Operations
+
+You will be manipulating data a lot with Tensors, and it will take some getting used to.
+Try changing the second tensor between
+
+* 10
+* [10]
+* [10, 20, 30]
+* [10, 20, 30, 40]
+
+```elixir
+[1,2,3]
+|> Nx.tensor()
+|> Nx.add(Nx.tensor([10, 20, 30]))
+```
+

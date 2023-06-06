@@ -72,7 +72,7 @@ model = LR.fit(x, y)
 
 ```
 
-13:24:34.262 [info] TfrtCpuClient created.
+15:13:01.786 [info] TfrtCpuClient created.
 
 ```
 
@@ -82,12 +82,12 @@ model = LR.fit(x, y)
 %Scholar.Linear.LinearRegression{
   coefficients: #Nx.Tensor<
     f32[1]
-    EXLA.Backend<host:0, 0.3028247911.3071934480.168180>
+    EXLA.Backend<host:0, 0.1252284835.3043360784.127592>
     [2.3761065006256104]
   >,
   intercept: #Nx.Tensor<
     f32
-    EXLA.Backend<host:0, 0.3028247911.3071934480.168183>
+    EXLA.Backend<host:0, 0.1252284835.3043360784.127595>
     17.176986694335938
   >
 }
@@ -104,7 +104,7 @@ LR.predict(model, Nx.tensor([[15]]))
 ```
 #Nx.Tensor<
   f32[1]
-  EXLA.Backend<host:0, 0.3028247911.3071934480.168187>
+  EXLA.Backend<host:0, 0.1252284835.3043360784.127599>
   [52.81858444213867]
 >
 ```
@@ -175,4 +175,40 @@ Vl.new(
 
 ```vega-lite
 {"$schema":"https://vega.github.io/schema/vega-lite/v5.json","height":630,"layer":[{"data":{"values":[{"x":12,"y":36},{"x":20,"y":72},{"x":18,"y":68},{"x":30,"y":82},{"x":24,"y":75}]},"encoding":{"x":{"axis":{"grid":false},"field":"x","type":"quantitative"},"y":{"axis":{"grid":false},"field":"y","type":"quantitative"}},"mark":{"size":500,"type":"circle"}},{"data":{"values":[{"x":0,"y":17.176986694335938},{"x":40,"y":112.22124671936035}]},"encoding":{"x":{"field":"x","type":"quantitative"},"y":{"field":"y","type":"quantitative"}},"mark":{"color":"green","type":"line"}}],"title":{"text":"Pizza Dough Approximation"},"width":630}
+```
+
+## Overfitting the data
+
+Here we demonstrate an example of "overfitting" where we our model too closely follows the test data.
+
+```elixir
+df = DF.new(x: x, y: y)
+
+linex = Nx.concatenate([x, Nx.tensor([[0]])])
+liney = Nx.concatenate([y, Nx.tensor([10])])
+df_line = DF.new(x: linex, y: liney)
+
+Vl.new(
+  title: [text: "Pizza Dough Approximation"],
+  width: 630,
+  height: 630
+)
+|> Vl.layers([
+  Vl.new()
+  |> Vl.data_from_values(df)
+  |> Vl.mark(:circle, size: 500)
+  |> Vl.encode_field(:x, "x", type: :quantitative, axis: [grid: false])
+  |> Vl.encode_field(:y, "y", type: :quantitative, axis: [grid: false]),
+  Vl.new()
+  |> Vl.data_from_values(df_line)
+  |> Vl.mark(:line)
+  |> Vl.encode_field(:x, "x", type: :quantitative, axis: [grid: false])
+  |> Vl.encode_field(:y, "y", type: :quantitative, axis: [grid: false])
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```vega-lite
+{"$schema":"https://vega.github.io/schema/vega-lite/v5.json","height":630,"layer":[{"data":{"values":[{"x":12,"y":36},{"x":20,"y":72},{"x":18,"y":68},{"x":30,"y":82},{"x":24,"y":75}]},"encoding":{"x":{"axis":{"grid":false},"field":"x","type":"quantitative"},"y":{"axis":{"grid":false},"field":"y","type":"quantitative"}},"mark":{"size":500,"type":"circle"}},{"data":{"values":[{"x":12,"y":36},{"x":20,"y":72},{"x":18,"y":68},{"x":30,"y":82},{"x":24,"y":75},{"x":0,"y":10}]},"encoding":{"x":{"axis":{"grid":false},"field":"x","type":"quantitative"},"y":{"axis":{"grid":false},"field":"y","type":"quantitative"}},"mark":"line"}],"title":{"text":"Pizza Dough Approximation"},"width":630}
 ```

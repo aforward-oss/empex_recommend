@@ -1,6 +1,15 @@
 # Pizzera Web App
 
 ```elixir
+# Don't forget to start pizzeria
+# iex --sname pizzeria --cookie pizzeriacookie -S mix phx.server
+
+# And setup the training data
+# mix run priv/repo/linear.exs
+
+# OR,
+# mix run priv/repo/polynomial.exs
+
 alias Pizzeria.Ml.Engine
 alias Pizzeria.Ml.Predictor, as: ML
 alias VegaLite, as: Vl
@@ -14,8 +23,8 @@ require Explorer.Series, as: S
 We have, for example 31 days of data (Jan 1 - 31).  We will split our data into a training set into two, the most often used splits are 80/20, 90/10, and 67/33.  We will pick 80/20.
 
 ```elixir
-traindata = Engine.dataset({~D[2023-01-01], ~D[2023-01-24]})
-testdata = Engine.dataset({~D[2023-01-25], ~D[2023-01-31]})
+traindata = Engine.dataset({~D[2023-01-01], ~D[2023-09-30]})
+testdata = Engine.dataset({~D[2023-10-01], ~D[2023-12-31]})
 ```
 
 ## Visualize the Data
@@ -33,15 +42,18 @@ Vl.new(
   height: 630
 )
 |> Vl.data_from_values(df)
-|> Vl.mark(:circle, color: :blue, size: 500)
-|> Vl.encode_field(:x, "x", type: :quantitative)
-|> Vl.encode_field(:y, "y", type: :quantitative)
+|> Vl.mark(:circle, color: :blue, size: 100)
+|> Vl.encode_field(:x, "x", type: :quantitative, axis: [grid: false])
+|> Vl.encode_field(:y, "y", type: :quantitative, axis: [grid: false])
 ```
 
 ## Train The Data
 
 ```elixir
-model = Engine.train(traindata)
+# Let's try linear regression
+alias Scholar.Linear.LinearRegression, as: LR
+{features, labels} = traindata
+model = LR.fit(features, labels)
 ```
 
 ## Visualize The Model
@@ -56,7 +68,7 @@ traindf = DF.new(x: testx, y: testy)
 [intercept] = Nx.to_flat_list(model.intercept)
 [coefficients] = Nx.to_flat_list(model.coefficients)
 x_1 = 0
-x_2 = 50
+x_2 = 60
 
 line = %{
   x: [x_1, x_2],
@@ -72,18 +84,18 @@ Vl.new(
   Vl.new()
   |> Vl.data_from_values(df)
   |> Vl.mark(:circle, color: :blue)
-  |> Vl.encode_field(:x, "x", type: :quantitative)
-  |> Vl.encode_field(:y, "y", type: :quantitative),
+  |> Vl.encode_field(:x, "x", type: :quantitative, axis: [grid: false])
+  |> Vl.encode_field(:y, "y", type: :quantitative, axis: [grid: false]),
   Vl.new()
   |> Vl.data_from_values(traindf)
   |> Vl.mark(:square, color: :red)
-  |> Vl.encode_field(:x, "x", type: :quantitative)
-  |> Vl.encode_field(:y, "y", type: :quantitative),
+  |> Vl.encode_field(:x, "x", type: :quantitative, axis: [grid: false])
+  |> Vl.encode_field(:y, "y", type: :quantitative, axis: [grid: false]),
   Vl.new()
   |> Vl.data_from_values(line)
   |> Vl.mark(:line, color: :green, weight: 2)
-  |> Vl.encode_field(:x, "x", type: :quantitative)
-  |> Vl.encode_field(:y, "y", type: :quantitative)
+  |> Vl.encode_field(:x, "x", type: :quantitative, axis: [grid: false])
+  |> Vl.encode_field(:y, "y", type: :quantitative, axis: [grid: false])
 ])
 ```
 
@@ -97,6 +109,71 @@ alias Scholar.Linear.LinearRegression, as: LR
 
 model
 |> LR.predict(features)
+|> Nx.subtract(labels)
+|> Nx.abs()
+|> Nx.mean()
+```
+
+## Tweak the model
+
+```elixir
+alias Scholar.Linear.PolynomialRegression, as: PR
+{features, labels} = traindata
+model = PR.fit(features, labels)
+```
+
+Let's see if a polynominal regression fits nicer.
+
+```elixir
+{x, y} = traindata
+df = DF.new(x: x, y: y)
+
+{testx, testy} = testdata
+traindf = DF.new(x: testx, y: testy)
+
+polyx = Enum.to_list(1..60)
+
+polyy =
+  polyx
+  |> Enum.map(&Nx.tensor([[&1]]))
+  |> Enum.map(&(PR.predict(model, &1) |> Nx.to_flat_list() |> List.first()))
+
+Vl.new(
+  title: [text: "Pizza Dough Approximation"],
+  width: 630,
+  height: 630
+)
+|> Vl.layers([
+  Vl.new()
+  |> Vl.data_from_values(df)
+  |> Vl.mark(:circle, color: :blue)
+  |> Vl.encode_field(:x, "x", type: :quantitative, axis: [grid: false])
+  |> Vl.encode_field(:y, "y", type: :quantitative, axis: [grid: false]),
+  Vl.new()
+  |> Vl.data_from_values(traindf)
+  |> Vl.mark(:square, color: :red)
+  |> Vl.encode_field(:x, "x", type: :quantitative, axis: [grid: false])
+  |> Vl.encode_field(:y, "y", type: :quantitative, axis: [grid: false]),
+  Vl.new()
+  |> Vl.data_from_values(line)
+  |> Vl.mark(:line, color: :lightgrey, weight: 1)
+  |> Vl.encode_field(:x, "x", type: :quantitative, axis: [grid: false])
+  |> Vl.encode_field(:y, "y", type: :quantitative, axis: [grid: false]),
+  Vl.new()
+  |> Vl.data_from_values(%{x: polyx, y: polyy})
+  |> Vl.mark(:line, color: :green, weight: 2)
+  |> Vl.encode_field(:x, "x", type: :quantitative, axis: [grid: false])
+  |> Vl.encode_field(:y, "y", type: :quantitative, axis: [grid: false])
+])
+```
+
+## Re-evaluate The Model
+
+```elixir
+{features, labels} = testdata
+
+model
+|> PR.predict(features)
 |> Nx.subtract(labels)
 |> Nx.abs()
 |> Nx.mean()
