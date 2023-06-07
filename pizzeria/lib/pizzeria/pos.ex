@@ -19,6 +19,7 @@ defmodule Pizzeria.Pos do
   """
   def list_reservations do
     from(t in Reservation,
+      limit: 1000,
       order_by: [desc: t.datetime]
     )
     |> Repo.all()
@@ -145,7 +146,11 @@ defmodule Pizzeria.Pos do
 
   """
   def list_orders do
-    Repo.all(Order)
+    from(t in Order,
+      limit: 1000,
+      order_by: [desc: t.ordered_at]
+    )
+    |> Repo.all()
   end
 
   @doc """
