@@ -1,7 +1,8 @@
 import Config
 
 config :gamedrop,
-  calculating_sleep: 10
+  calculating_sleep: 10,
+  refresh_on_modify: false
 
 # Configure your database
 #

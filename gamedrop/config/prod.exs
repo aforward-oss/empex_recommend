@@ -1,7 +1,8 @@
 import Config
 
 config :gamedrop,
-  calculating_sleep: 2000
+  calculating_sleep: 2000,
+  refresh_on_modify: true
 
 # For production, don't forget to configure the url host
 # to something meaningful, Phoenix uses this information

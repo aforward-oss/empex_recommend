@@ -7,6 +7,7 @@ defmodule Gamedrop.Pos do
   alias Gamedrop.Repo
 
   alias Gamedrop.Pos.Gameplay
+  alias Gamedrop.Ml.Worker
 
   @doc """
   Returns the list of gameplays.
@@ -53,6 +54,7 @@ defmodule Gamedrop.Pos do
     %Gameplay{}
     |> Gameplay.changeset(attrs)
     |> Repo.insert()
+    |> refresh_recommender()
   end
 
   @doc """
@@ -71,6 +73,7 @@ defmodule Gamedrop.Pos do
     gameplay
     |> Gameplay.changeset(attrs)
     |> Repo.update()
+    |> refresh_recommender()
   end
 
   @doc """
@@ -87,6 +90,7 @@ defmodule Gamedrop.Pos do
   """
   def delete_gameplay(%Gameplay{} = gameplay) do
     Repo.delete(gameplay)
+    |> refresh_recommender()
   end
 
   @doc """
@@ -292,5 +296,13 @@ defmodule Gamedrop.Pos do
   """
   def change_game(%Game{} = game, attrs \\ %{}) do
     Game.changeset(game, attrs)
+  end
+
+  defp refresh_recommender(passthrough) do
+    if Application.get_env(:gamedrop, :refresh_on_modify, false) do
+      Worker.refresh()
+    end
+
+    passthrough
   end
 end
