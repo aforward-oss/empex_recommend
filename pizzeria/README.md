@@ -29,3 +29,79 @@ the following cookie value
 ```
 iex --sname pizzeria --cookie pizzeriacookie -S mix phx.server
 ```
+
+## Fly.io
+
+Fly was intsalled with
+
+```bash
+flyctl launch
+```
+
+### Manage Secrets
+
+To see these secrets run
+
+```
+flyctl secrets list
+```
+
+To add a new secret run
+
+```
+flyctl secrets set CLOAK_KEY=def456
+```
+
+
+### Deploy Application
+
+After making changes you can deploy an updated version with.
+
+```bash
+flyctl deploy
+```
+
+### View Running Application
+
+```bash
+fly open
+```
+
+### Access Database
+
+To analyze production data you can connect to postgres via
+
+```bash
+flyctl postgres connect -a pizzeria-db
+```
+
+### Debugging Production
+
+You can [access the production iex shell](https://fly.io/docs/getting-started/elixir/#iex-shell-into-your-running-app).
+
+```bash
+# connect to the remote console
+fly ssh console
+```
+
+And then attached to the running app
+
+```bash
+./bin/pizzeria remote
+```
+
+
+### Common Opeations
+
+Seed linear data
+
+```elixir
+Pizzeria.Migrations.Seeds.linear()
+```
+
+Seed polynomial data
+
+```elixir
+Pizzeria.Migrations.Seeds.polynomial()
+```
+
