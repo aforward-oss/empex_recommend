@@ -13,16 +13,16 @@ defmodule Gamedrop.Ml.Worker do
   end
 
   def refresh() do
-    state = Engine.train() |> save()
-    GenServer.call(__MODULE__, {:refresh, state})
+    GenServer.cast(__MODULE__, :refresh)
   end
 
   def predict(features), do: GenServer.call(__MODULE__, {:predict, features})
 
   def opts(), do: GenServer.call(__MODULE__, :opts)
 
-  def handle_call({:refresh, state}, _from, _state) do
-    {:reply, state, state}
+  def handle_cast(:refresh, _state) do
+    state = Engine.train() |> save()
+    {:noreply, state}
   end
 
   def handle_call({:predict, features}, _from, state) do
