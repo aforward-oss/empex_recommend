@@ -1,7 +1,14 @@
-# empex_recommend
+# Recommending Elixir To Build a Recommendation Engine?
 
 This repo provides supplementary documentation and code
 for a [EMPEX 2023 Talk on Recommender Engines by Andrew Forward](https://www.empex.co/new-york#speakers)
+
+The machine learning (ML) landscape in Elixir is evolving quickly.
+Our team does not have production ML experience and the go-to right now is clearly
+(clearly right?) Python. But, we wanted to see if we could stick to our tech stack
+(aka Elixir/Phoenix) and set out to build a recommendation engine for our gifting platform.
+We landed on scholar and our team explored algorithms like KNearestNeighbour, (Native) Bayes,
+and KMeans in building our recommender.
 
 The repo is comprised of three parts Livebook Notebooks, Pizzeria Sample App, Gamedrop Sample App
 
