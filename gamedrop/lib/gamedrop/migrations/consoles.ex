@@ -16,7 +16,7 @@ defmodule Gamedrop.Migrations.Consoles do
   def gameplays() do
     Repo.delete_all(Gamedrop.Pos.Gameplay)
 
-    "./priv/repo/gameplays.csv"
+    resolve_filename("./priv/repo/gameplays.csv")
     |> File.stream!()
     |> CSV.decode(headers: true)
     |> Enum.each(fn {:ok, data} ->
@@ -224,5 +224,12 @@ defmodule Gamedrop.Migrations.Consoles do
     ('Switch', 'Adventure Time: Pirates of the Enchiridion', ARRAY['adventure', 'action'], 5.0, false, NOW(), NOW()),
     ('Switch', 'Fast RMX', ARRAY['racing', 'action'], 5.0, false, NOW(), NOW());
     """)
+  end
+
+  defp resolve_filename(filename) do
+    cond do
+      File.exists?(filename) -> filename
+      :else -> Application.app_dir(:gamedrop, filename)
+    end
   end
 end
