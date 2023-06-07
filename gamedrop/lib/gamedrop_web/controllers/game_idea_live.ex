@@ -7,15 +7,15 @@ defmodule GamedropWeb.GameIdeaLive do
   def mount(params, _session, socket) do
     ml_opts = Worker.opts()
 
-    {game, step} =
+    {all_games, step} =
       case Map.get(params, "game") do
-        nil -> {nil, :input}
-        provided -> {provided, :suggestion}
+        nil -> {[], :input}
+        provided -> {[provided], :suggestion}
       end
 
     socket
     |> assign(:all_game_types, ml_opts[:all_game_types])
-    |> assign(:game, game)
+    |> assign_all_games(all_games)
     |> assign(:step, step)
     |> reply(:ok)
   end
@@ -162,12 +162,22 @@ defmodule GamedropWeb.GameIdeaLive do
                   <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
                     <%= @game %>
                   </h1>
-                  <button
-                    phx-click="change_criteria"
-                    class="py-2.5 underline text-base font-semibold text-sky-600 hover:text-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
-                  >
-                    Change my criteria
-                  </button>
+
+                  <%= if @more_games do %>
+                    <button
+                      phx-click="next_game"
+                      class="py-2.5 underline text-base font-semibold text-sky-600 hover:text-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+                    >
+                      Show Me A Different Game
+                    </button>
+                  <% else %>
+                    <button
+                      phx-click="change_criteria"
+                      class="py-2.5 underline text-base font-semibold text-red-600 hover:text-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                    >
+                      Change my criteria
+                    </button>
+                  <% end %>
                 </div>
               </div>
             </div>
@@ -204,9 +214,23 @@ defmodule GamedropWeb.GameIdeaLive do
   end
 
   @impl true
+  def handle_event("next_game", _params, socket) do
+    if socket.assigns[:more_games] do
+      all_games = socket.assigns[:all_games]
+      next_i = socket.assigns[:next_index]
+
+      socket
+      |> assign_all_games(all_games, next_i)
+    else
+      socket
+    end
+    |> reply(:noreply)
+  end
+
+  @impl true
   def handle_event("change_criteria", _params, socket) do
     socket
-    |> assign(:game, nil)
+    |> assign_all_games([])
     |> assign(:step, :input)
     |> reply(:noreply)
   end
@@ -215,8 +239,30 @@ defmodule GamedropWeb.GameIdeaLive do
   def handle_info({:calculation_done, all_games}, socket) do
     socket
     |> assign(:step, :suggestion)
-    |> assign(:game, List.first(all_games))
+    |> assign_all_games(all_games)
     |> reply(:noreply)
+  end
+
+  def assign_all_games(socket, all_games), do: assign_all_games(socket, all_games, 0)
+
+  def assign_all_games(socket, [], _) do
+    socket
+    |> assign(:game, nil)
+    |> assign(:game_index, nil)
+    |> assign(:all_games, nil)
+    |> assign(:more_games, false)
+  end
+
+  def assign_all_games(socket, all_games, i) do
+    next_i = i + 1
+    n = Enum.count(all_games)
+
+    socket
+    |> assign(:game, Enum.fetch!(all_games, i))
+    |> assign(:next_index, next_i)
+    |> assign(:all_games, all_games)
+    |> assign(:num_games, n)
+    |> assign(:more_games, next_i < n)
   end
 
   def clean(features) do
