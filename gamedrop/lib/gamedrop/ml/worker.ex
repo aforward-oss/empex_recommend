@@ -16,7 +16,9 @@ defmodule Gamedrop.Ml.Worker do
     GenServer.cast(__MODULE__, :refresh)
   end
 
-  def predict(features), do: GenServer.call(__MODULE__, {:predict, features})
+  def predict(features), do: predict(features, 1)
+
+  def predict(features, n), do: GenServer.call(__MODULE__, {:predict, features, n})
 
   def opts(), do: GenServer.call(__MODULE__, :opts)
 
@@ -25,8 +27,8 @@ defmodule Gamedrop.Ml.Worker do
     {:noreply, state}
   end
 
-  def handle_call({:predict, features}, _from, state) do
-    result = ML.predict(features, state)
+  def handle_call({:predict, features, n}, _from, state) do
+    result = ML.predict(features, n, state)
     {:reply, result, state}
   end
 

@@ -8,23 +8,36 @@ defmodule Gamedrop.Ml.Predictor do
   def model_filename(), do: @filename
   def model_state(), do: @model_state
 
-  def predict(features), do: predict(features, model_state())
+  def predict(features), do: predict(features, 1, model_state())
 
-  def predict(features, {model, opts}), do: predict(features, model, opts)
+  def predict(features, n) when is_integer(n), do: predict(features, n, model_state())
 
-  def predict(features, model, opts) do
-    x =
-      [:budget, :game_types]
-      |> Enum.map(fn f -> Map.get(features, f) || Map.get(features, "#{f}") end)
-      |> feature_to_tensor(opts)
-      |> Nx.reshape({1, :auto})
+  def predict(features, {model, opts}), do: predict(features, 1, {model, opts})
 
+  def predict(features, n, {model, opts}) do
+    x = to_x(features, opts)
     all_game_names = Keyword.get(opts, :all_game_names, [])
 
-    apply(model.__struct__, :predict, [model, x])
-    |> Nx.to_list()
-    |> List.first()
-    |> then(&Enum.fetch!(all_game_names, &1))
+    if n == 1 do
+      apply(model.__struct__, :predict, [model, x])
+      |> Nx.to_list()
+      |> List.first()
+      |> then(&Enum.fetch!(all_game_names, &1))
+    else
+      apply(model.__struct__, :predict_probability, [model, x])
+      |> Nx.to_flat_list()
+      |> Enum.with_index()
+      |> Enum.sort(fn {a, _}, {b, _} -> a > b end)
+      |> Enum.take(5)
+      |> Enum.map(fn {_, i} -> Enum.fetch!(all_game_names, i) end)
+    end
+  end
+
+  def to_x(features, opts) do
+    [:budget, :game_types]
+    |> Enum.map(fn f -> Map.get(features, f) || Map.get(features, "#{f}") end)
+    |> feature_to_tensor(opts)
+    |> Nx.reshape({1, :auto})
   end
 
   def feature_to_tensor([budget, game_types], opts) do

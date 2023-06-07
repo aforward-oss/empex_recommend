@@ -15,7 +15,7 @@ defmodule GamedropWeb.GameIdeaLive do
 
     socket
     |> assign(:all_game_types, ml_opts[:all_game_types])
-    |> assign_game(game)
+    |> assign(:game, game)
     |> assign(:step, step)
     |> reply(:ok)
   end
@@ -194,7 +194,7 @@ defmodule GamedropWeb.GameIdeaLive do
 
       params
       |> clean()
-      |> Worker.predict()
+      |> Worker.predict(5)
       |> then(&send(view_pid, {:calculation_done, &1}))
     end)
 
@@ -206,16 +206,16 @@ defmodule GamedropWeb.GameIdeaLive do
   @impl true
   def handle_event("change_criteria", _params, socket) do
     socket
-    |> assign_game(nil)
+    |> assign(:game, nil)
     |> assign(:step, :input)
     |> reply(:noreply)
   end
 
   @impl true
-  def handle_info({:calculation_done, game}, socket) do
+  def handle_info({:calculation_done, all_games}, socket) do
     socket
     |> assign(:step, :suggestion)
-    |> assign_game(game)
+    |> assign(:game, List.first(all_games))
     |> reply(:noreply)
   end
 
@@ -237,11 +237,6 @@ defmodule GamedropWeb.GameIdeaLive do
 
   def game_image_src(game_name) do
     "/images/games/#{Game.slug(%{game_name: game_name})}.jpg"
-  end
-
-  def assign_game(socket, game) do
-    socket
-    |> assign(:game, game)
   end
 
   defp reply(socket, ok), do: {ok, socket}
