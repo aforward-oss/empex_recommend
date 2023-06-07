@@ -99,9 +99,9 @@ Seed linear data
 Pizzeria.Migrations.Seeds.linear()
 ```
 
-Seed polynomial data
+Seed logarithmic data
 
 ```elixir
-Pizzeria.Migrations.Seeds.polynomial()
+Pizzeria.Migrations.Seeds.logarithmic()
 ```
 

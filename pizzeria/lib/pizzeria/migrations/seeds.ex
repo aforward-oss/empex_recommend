@@ -60,7 +60,7 @@ defmodule Pizzeria.Migrations.Seeds do
     end
   end
 
-  def polynomial() do
+  def logarithmic() do
     Repo.delete_all(Reservation)
     Repo.delete_all(Order)
 
