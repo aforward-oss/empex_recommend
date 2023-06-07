@@ -30,7 +30,7 @@ the following cookie value
 iex --sname pizzeria --cookie pizzeriacookie -S mix phx.server
 ```
 
-## Fly.io
+## Fly.io Deployment
 
 Fly was intsalled with
 
@@ -91,7 +91,7 @@ And then attached to the running app
 ```
 
 
-### Common Opeations
+### Common Operations
 
 Seed linear data
 
