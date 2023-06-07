@@ -27,7 +27,13 @@ defmodule Gamedrop.Ml.Predictor do
       apply(model.__struct__, :predict_probability, [model, x])
       |> Nx.to_flat_list()
       |> Enum.with_index()
-      |> Enum.sort(fn {a, _}, {b, _} -> a > b end)
+      |> Enum.sort(fn {a, x}, {b, y} ->
+        if a == b do
+          x < y
+        else
+          a > b
+        end
+      end)
       |> Enum.take(5)
       |> Enum.map(fn {_, i} -> Enum.fetch!(all_game_names, i) end)
     end
