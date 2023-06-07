@@ -35,6 +35,9 @@ defmodule Gamedrop.Ml.EngineTest do
 
       assert ML.predict(%{"budget" => 1}, {model, opts}) == "frogger"
       assert ML.predict(%{"budget" => 3}, {model, opts}) == "zelda"
+
+      assert ML.predict(%{"budget" => 1}, 2, {model, opts}) == ["frogger", "zelda"]
+      assert ML.predict(%{"budget" => 3}, 2, {model, opts}) == ["zelda", "frogger"]
     end
   end
 end
