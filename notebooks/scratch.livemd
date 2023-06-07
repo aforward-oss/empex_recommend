@@ -1,0 +1,24 @@
+# Talk
+
+```elixir
+Mix.install([
+  {:nx, "~> 0.5"},
+  {:scidata, "~> 0.1"},
+  {:explorer, "~> 0.5.0"},
+  {:kino, "~> 0.9.3"}
+])
+```
+
+## Tensors
+
+The tensor [arg](https://hexdocs.pm/nx/Nx.html#tensor/2) can be one of many things
+
+* A number (aka scalar)
+* A boolean (synatic sugar on a special 0/1 tensor)
+* A list of numbers, booleans, or list of numbers and booleans
+* A tensor (why? well the `opts` we haven't talke about yet would then be used to tweak an existing tensor)
+
+```elixir
+```
+
+

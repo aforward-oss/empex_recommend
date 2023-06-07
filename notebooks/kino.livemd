@@ -1,0 +1,148 @@
+<!-- livebook:{"persist_outputs":true} -->
+
+# Visualizing Your Data With Kino
+
+```elixir
+Mix.install([
+  {:nx, "~> 0.5"},
+  {:scidata, "~> 0.1"},
+  {:explorer, "~> 0.5.0"},
+  {:kino, "~> 0.9.3"}
+])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+## Load your data
+
+We will be grabbing the [MNIST dataset](https://www.kaggle.com/datasets/hojjatk/mnist-dataset) from 
+[scidata](https://github.com/elixir-nx/scidata) 
+using [Scidata.MNIST.download()](https://github.com/elixir-nx/scidata/blob/master/lib/scidata/mnist.ex).  This is equivalent (I think) to [tfds](https://github.com/tensorflow/datasets).
+Note that MNIST splits the images from the labels.
+
+```elixir
+{images, labels} = Scidata.MNIST.download()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{{<<0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...>>, {:u, 8}, {60000, 1, 28, 28}},
+ {<<5, 0, 4, 1, 9, 2, 1, 3, 1, 4, 3, 5, 3, 6, 1, 7, 2, 8, 6, 9, 4, 0, 9, 1, 1, 2, 4, 3, 2, 7, 3, 8,
+    6, 9, 0, 5, 6, 0, 7, 6, 1, 8, 7, 9, 3, 9, 8, ...>>, {:u, 8}, {60000}}}
+```
+
+In the dataset, we know the images are `28x28` (so 784 pixels) and 60k images.  We can also extract this information from the `images` data itself.
+
+```elixir
+{_, _, shape} = images
+{dataset_size, _channels, h, w} = shape
+num_features = h * w
+
+{dataset_size, num_features}
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+{60000, 784}
+```
+
+Note that I called the pixels `num_features` as we use that matrix of 1s (dark) and 0s (light) to help us figure out the letter.  So we need to take our images `bin` and load them based on the `type`.  We then normlize them to 0s and 1s, as [the docs state](http://yann.lecun.com/exdb/mnist/) that `pixel 0 means background (white), 255 means foreground (black).` Finally, we describe the shape of the data as containing `{image, channel, height, width}`.
+
+```elixir
+{bin, type, _} = images
+
+train_images =
+  bin
+  |> Nx.from_binary(type)
+  |> Nx.divide(255.0)
+  |> Nx.reshape(shape, names: [:images, :channels, :height, :width])
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Nx.Tensor<
+  f32[images: 60000][channels: 1][height: 28][width: 28]
+  [
+    [
+      [
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, ...],
+        ...
+      ]
+    ],
+    ...
+  ]
+>
+```
+
+We can visualize the number using
+
+```elixir
+train_images[[images: 1]] |> Nx.to_heatmap()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+#Nx.Heatmap<
+  f32[channels: 1][height: 28][width: 28]
+  [
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　
+  ]
+>
+```
+
+Let's visualize with a Kino using Nx.to_heatmap()
+
+```elixir
+form =
+  Kino.Control.form(
+    [
+      index: Kino.Input.number("Image Index", default: 0)
+    ],
+    submit: "Render"
+  )
+
+Kino.render(form)
+
+form
+|> Kino.Control.stream()
+|> Kino.animate(fn %{data: %{index: index}} ->
+  train_images[[images: index]] |> Nx.to_heatmap()
+end)
+```

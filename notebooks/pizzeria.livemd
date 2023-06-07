@@ -72,7 +72,7 @@ model = LR.fit(x, y)
 
 ```
 
-15:13:01.786 [info] TfrtCpuClient created.
+12:06:40.232 [info] TfrtCpuClient created.
 
 ```
 
@@ -82,12 +82,12 @@ model = LR.fit(x, y)
 %Scholar.Linear.LinearRegression{
   coefficients: #Nx.Tensor<
     f32[1]
-    EXLA.Backend<host:0, 0.1252284835.3043360784.127592>
+    EXLA.Backend<host:0, 0.1338209266.4265476112.190227>
     [2.3761065006256104]
   >,
   intercept: #Nx.Tensor<
     f32
-    EXLA.Backend<host:0, 0.1252284835.3043360784.127595>
+    EXLA.Backend<host:0, 0.1338209266.4265476112.190230>
     17.176986694335938
   >
 }
@@ -104,9 +104,101 @@ LR.predict(model, Nx.tensor([[15]]))
 ```
 #Nx.Tensor<
   f32[1]
-  EXLA.Backend<host:0, 0.1252284835.3043360784.127599>
+  EXLA.Backend<host:0, 0.1338209266.4265476112.190234>
   [52.81858444213867]
 >
+```
+
+## Save The Model
+
+Great, so now we want to save this model for re-use.  For that, we reach into Axom (I hope).
+
+```elixir
+model
+|> Nx.serialize()
+|> then(&File.write!("pizzeria.nx", &1))
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+:ok
+```
+
+## Load The Model
+
+Let's reload the model and run our predictions.
+
+```elixir
+model = File.read!("pizzeria.nx") |> Nx.deserialize()
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+%Scholar.Linear.LinearRegression{
+  coefficients: #Nx.Tensor<
+    f32[1]
+    EXLA.Backend<host:0, 0.1338209266.4265476122.190349>
+    [2.3761065006256104]
+  >,
+  intercept: #Nx.Tensor<
+    f32
+    EXLA.Backend<host:0, 0.1338209266.4265476112.190236>
+    17.176986694335938
+  >
+}
+```
+
+## Run the model
+
+Now that the model is loaded back into Elixir, we can run the model and predict the outcome of the number of pizza doughs to create.
+
+```elixir
+LR.predict(model, Nx.tensor([15]))
+|> Nx.to_number()
+|> Float.round(0)
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+53.0
+```
+
+## More Generic Model Runner
+
+As we are using scholar directly, instead of a neural network (aka Axon), we _could_ assume the model, but it is better to assume the method _predict_.
+
+```elixir
+for num_resi <- [5, 10, 15, 20, 25, 30, 35, 40] do
+  num_doughs =
+    apply(model.__struct__, :predict, [model, Nx.tensor([num_resi])])
+    |> Nx.to_number()
+    |> Float.round(0)
+
+  IO.puts("With #{num_resi} reseravations  we should make #{num_doughs} pizza doughs")
+  num_doughs
+end
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+With 5 reseravations  we should make 29.0 pizza doughs
+With 10 reseravations  we should make 41.0 pizza doughs
+With 15 reseravations  we should make 53.0 pizza doughs
+With 20 reseravations  we should make 65.0 pizza doughs
+With 25 reseravations  we should make 77.0 pizza doughs
+With 30 reseravations  we should make 88.0 pizza doughs
+With 35 reseravations  we should make 100.0 pizza doughs
+With 40 reseravations  we should make 112.0 pizza doughs
+```
+
+<!-- livebook:{"output":true} -->
+
+```
+[29.0, 41.0, 53.0, 65.0, 77.0, 88.0, 100.0, 112.0]
 ```
 
 ## Visualize Data

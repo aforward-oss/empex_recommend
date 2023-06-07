@@ -1,0 +1,59 @@
+# Gamedrop Web App
+
+```elixir
+# Don't forget to start pizzeria
+# iex --sname gamedrop --cookie gamedropcookie -S mix phx.server
+
+:ok
+```
+
+## Load The Data
+
+We can load our gamedrop database using a migration
+
+```elixir
+alias Gamedrop.Migrations.Seeds
+Seeds.run()
+```
+
+## Make a Prediction
+
+```elixir
+alias Gamedrop.Ml.Predictor, as: ML
+alias Scholar.NaiveBayes.Complement
+{model, opts} = ML.model_state()
+
+x = ML.to_x(%{budget: 3, game_types: ["Adventure", "Arcade"]}, opts)
+Complement.predict(model, x) |> Nx.to_list() |> List.first()
+```
+
+## Pick Top N Predictions
+
+```elixir
+Complement.predict_probability(model, x)
+|> Nx.to_flat_list()
+|> Enum.with_index()
+|> Enum.sort(fn {a, x}, {b, y} ->
+  if a == b do
+    x < y
+  else
+    a > b
+  end
+end)
+|> Enum.take(5)
+```
+
+## Using Gamedrop
+
+Let's get the top prediction
+
+```elixir
+alias Gamedrop.Ml.Worker
+Worker.predict(%{"budget" => 3, "game_types" => ["Adventure", "Arcade"]})
+```
+
+Or the top 5 predictions.
+
+```elixir
+Worker.predict(%{"budget" => 3, "game_types" => ["Adventure", "Arcade"]}, 5)
+```

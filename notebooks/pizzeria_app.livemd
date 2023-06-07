@@ -4,18 +4,21 @@
 # Don't forget to start pizzeria
 # iex --sname pizzeria --cookie pizzeriacookie -S mix phx.server
 
-# And setup the training data
-# mix run priv/repo/linear.exs
 
-# OR,
-# mix run priv/repo/polynomial.exs
-
-alias Pizzeria.Ml.Engine
-alias Pizzeria.Ml.Predictor, as: ML
 alias VegaLite, as: Vl
 require Explorer.DataFrame, as: DF
 require Explorer.Series, as: S
 :ok
+```
+
+## Load The Data
+
+Let's load our logarithmic dataset (you can also load a `linear()` version).
+
+```elixir
+alias Pizzeria.Migrations.Seeds
+# Seeds.linear()
+Seeds.logarithmic()
 ```
 
 ## Training The Data

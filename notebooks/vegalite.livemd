@@ -1,6 +1,6 @@
 <!-- livebook:{"persist_outputs":true} -->
 
-# Visualizations
+# Visualizing your Data With VegaLite
 
 ```elixir
 Mix.install([
