@@ -204,7 +204,7 @@ defmodule GamedropWeb.GameIdeaLive do
   end
 
   @impl true
-  def handle_event("change_criteria", params, socket) do
+  def handle_event("change_criteria", _params, socket) do
     socket
     |> assign_game(nil)
     |> assign(:step, :input)
