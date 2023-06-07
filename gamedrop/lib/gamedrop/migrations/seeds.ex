@@ -1,4 +1,4 @@
-defmodule Gamedrop.Migrations.Consoles do
+defmodule Gamedrop.Migrations.Seeds do
   alias Gamedrop.Repo
 
   def run() do
@@ -39,15 +39,7 @@ defmodule Gamedrop.Migrations.Consoles do
       |> Map.put("gameplay_types", gameplay_types)
       |> Map.put("console_name", console_name)
       |> Map.put("top_rated", true)
-      |> Gamedrop.Pos.create_gameplay()
-      |> case do
-        {:ok, _} ->
-          :ok
-
-        {:error, changeset} ->
-          IO.puts(data["game_name"])
-          IO.inspect(changeset.errors)
-      end
+      |> create_gameplay()
     end)
   end
 
@@ -224,6 +216,12 @@ defmodule Gamedrop.Migrations.Consoles do
     ('Switch', 'Adventure Time: Pirates of the Enchiridion', ARRAY['adventure', 'action'], 5.0, false, NOW(), NOW()),
     ('Switch', 'Fast RMX', ARRAY['racing', 'action'], 5.0, false, NOW(), NOW());
     """)
+  end
+
+  def create_gameplay(attrs) do
+    %Gamedrop.Pos.Gameplay{}
+    |> Gamedrop.Pos.Gameplay.changeset(attrs)
+    |> Repo.insert!()
   end
 
   defp resolve_filename(filename) do

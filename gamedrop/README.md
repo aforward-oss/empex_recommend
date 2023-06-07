@@ -86,8 +86,8 @@ And then attached to the running app
 
 ### Common Operations
 
-Seed linear data
+Seed the gamedrop db
 
 ```elixir
-Gamedrop.Migrations.Consoles.run()
+Gamedrop.Migrations.Seeds.run()
 ```

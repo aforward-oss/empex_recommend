@@ -11,4 +11,4 @@
 # and so on) as they will fail if something goes wrong.
 
 IO.puts("Upsert consoles")
-Gamedrop.Migrations.Consoles.run()
+Gamedrop.Migrations.Seeds.run()
