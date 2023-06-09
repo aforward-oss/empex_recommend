@@ -2,10 +2,16 @@
 
 ```elixir
 Mix.install([
-  {:nx, "~> 0.5"},
-  {:scidata, "~> 0.1"},
-  {:explorer, "~> 0.5.0"},
-  {:kino, "~> 0.9.3"}
+  {:nx, github: "elixir-nx/nx", sparse: "nx", override: true},
+  {:scholar, github: "elixir-nx/scholar", branch: "main"},
+  {:optimus, "~> 0.1"},
+  {:explorer, "~> 0.5.6"},
+  {:exla, "~> 0.5.2"},
+  {:req, "~> 0.3.6"},
+  {:kino_vega_lite, "~> 0.1.8"},
+  {:kino, "~> 0.9.3"},
+  {:kino_explorer, "~> 0.1.6"},
+  {:scidata, "~> 0.1"}
 ])
 ```
 
@@ -19,18 +25,330 @@ The tensor [arg](https://hexdocs.pm/nx/Nx.html#tensor/2) can be one of many thin
 * A tensor (why? well the `opts` we haven't talke about yet would then be used to tweak an existing tensor)
 
 ```elixir
-# scalar = Nx.tensor(48)
-# true_scalar = Nx.tensor(true)
-# false_scalar = Nx.tensor(false)
-# vector = Nx.tensor([4, 8])
-# matrix = Nx.tensor([[1, 1, 2], [2, 2, 4]])
+scalar = Nx.tensor(48)
+true_scalar = Nx.tensor(true)
+false_scalar = Nx.tensor(false)
+vector = Nx.tensor([4, 8])
+matrix = Nx.tensor([[1, 1, 2], [2, 2, 4]])
 
-# [1,2,3]
-# |> Nx.tensor()
-# |> Nx.add(Nx.tensor(10))
-# |> Nx.add(Nx.tensor([10]))
-# |> Nx.add(Nx.tensor([10,20,30]))
-# |> Nx.add(Nx.tensor([10,20,30,40]))
+{scalar, true_scalar, false_scalar, vector, matrix}
 ```
 
+## Pizzeria
 
+Based on the last week of data we see the following
+
+| Date | # Resies | # Pizzas
+| --- | --- | --- |
+| Monday |  12 | 36
+| Tuesday | 20 | 72
+| Wednesday | 18 | 68
+| Thursday | 30 | 82
+| Friday | 0 | 98
+| Saturday |  0 | 168
+| Sunday |  24 | 75 |
+
+Now, the resaurant doesn't take reservations on Friday and Saturday.
+So how should we proceed?  We can drop the data and then not
+predict on Friday's and Saturdays.  Or, we could estimate the
+"resrvations" based on how many "flips" we normally get.
+For today, we will just drop that data.  Here's our model
+
+### Load The Data
+
+```elixir
+x = Nx.stack([12, 20, 18, 30, 24]) |> Nx.stack(axis: -1)
+y = Nx.tensor([36, 72, 68, 82, 75])
+```
+
+### Visualize The Data
+
+```elixir
+require Explorer.DataFrame, as: DF
+alias VegaLite, as: Vl
+
+df = DF.new(x: x, y: y)
+
+vl =
+  Vl.new(title: ["Pizzeria"], width: 630, height: 630)
+  |> Vl.data_from_values(df)
+  |> Vl.mark(:circle, size: 500)
+  |> Vl.encode_field(:x, "x", type: :quantitative)
+  |> Vl.encode_field(:y, "y", type: :quantitative)
+```
+
+### Fit The Data
+
+```elixir
+alias Scholar.Linear.LinearRegression, as: LR
+model = LR.fit(x, y)
+```
+
+### Extract The Linear Equation
+
+The equation is `y = mx + b` where `m` is the `coefficients` (just one) and the `b` is `intercept` (a scalar).
+
+```elixir
+[m] = Nx.to_flat_list(model.coefficients)
+[b] = Nx.to_flat_list(model.intercept)
+
+"y = #{m}x + #{b}"
+```
+
+### Visualize the The Equation
+
+Lines are simple to graph, you need a start `x=0` and the end `x=30` (why 30, as that's the biggest x value in our data above).
+
+```elixir
+line = %{
+  x: [0, 30],
+  y: [m * 0 + b, m * 30 + b]
+}
+
+Vl.new(title: ["Pizzeria Line"], width: 630, height: 630)
+|> Vl.layers([
+  Vl.new()
+  |> Vl.data_from_values(df)
+  |> Vl.mark(:circle, size: 500, color: :green)
+  |> Vl.encode_field(:x, "x", type: :quantitative)
+  |> Vl.encode_field(:y, "y", type: :quantitative),
+  Vl.new()
+  |> Vl.data_from_values(line)
+  |> Vl.mark(:line, size: 4, color: :red)
+  |> Vl.encode_field(:x, "x", type: :quantitative)
+  |> Vl.encode_field(:y, "y", type: :quantitative)
+])
+```
+
+### Estimate Pizza Doughs
+
+```elixir
+example_xs = [15]
+
+prediction_ys =
+  for e <- example_xs do
+    LR.predict(model, e)
+    |> Nx.to_flat_list()
+    |> List.first()
+  end
+
+inferences = %{x: example_xs, y: prediction_ys}
+
+Vl.new(title: ["Pizzeria Line"], width: 630, height: 630)
+|> Vl.layers([
+  Vl.new()
+  |> Vl.data_from_values(df)
+  |> Vl.mark(:circle, size: 100, color: :green)
+  |> Vl.encode_field(:x, "x", type: :quantitative)
+  |> Vl.encode_field(:y, "y", type: :quantitative),
+  Vl.new()
+  |> Vl.data_from_values(line)
+  |> Vl.mark(:line, size: 4, color: :red)
+  |> Vl.encode_field(:x, "x", type: :quantitative)
+  |> Vl.encode_field(:y, "y", type: :quantitative),
+  Vl.new()
+  |> Vl.data_from_values(inferences)
+  |> Vl.mark(:circle, size: 300, color: :purple)
+  |> Vl.encode_field(:x, "x", type: :quantitative)
+  |> Vl.encode_field(:y, "y", type: :quantitative)
+])
+```
+
+## Deploy Model
+
+Our model might not be perfect, but it's trained and built, so how do we get our system to then use that model in our code?  We don't want to re-train every time we want to predict something.
+
+```elixir
+model
+|> Nx.serialize()
+|> then(&File.write!("./pizzeria.nx", &1))
+```
+
+What can be serialized can then be deserialized to predict future reservation needs. Using the file based approach, we can actually compile in the model and build time and its just another data structure for elixir to use.
+
+```elixir
+mdl = File.read!("./pizzeria.nx") |> Nx.deserialize()
+```
+
+As the model is _just_ data representing the algorihtm, we can use to make prediction.
+
+```elixir
+LR.predict(mdl, 15)
+|> Nx.to_flat_list()
+|> List.first()
+```
+
+## Evaluate Model
+
+Our data is quite sparse on many fronts... only a weeks worth of reservation numbers AND only 1 dimension of data, the # of reservations.  And, it might not actually be a good approximation to assume the relationship is linear.  We call this "underfitting" where we don't have enough of the right stuff to make a good prediction.
+
+We started with a weeks worth, but now we have a years worth of data and looks like our linear regression does not seem to be giving our Pizzeria friend great results.  Looks like the data seems to follow more of a curve than a line, so with a one-line change to use PolynomialRegression we almost get a 50% reduction in error.
+
+```elixir
+defmodule Pizzeria.Migrations.Seeds do
+  @dates [
+    {1, 31},
+    {2, 28},
+    {3, 31},
+    {4, 30},
+    {5, 31},
+    {6, 30},
+    {7, 31},
+    {8, 31},
+    {9, 30},
+    {10, 31},
+    {11, 30},
+    {12, 31}
+  ]
+
+  def run() do
+    for {_, num} <- @dates,
+        _ <- 1..num do
+      num_resi = :rand.uniform(60) - 1
+
+      if num_resi > 0 do
+        weight = 10 + (:rand.uniform() * 0.1 - 0.5)
+        bias = 15 + (:rand.uniform() * 2.0 - 1.0)
+        num_pizzas = round(weight * :math.log2(num_resi) + bias)
+        [num_resi, num_pizzas]
+      else
+        nil
+      end
+    end
+    |> Enum.reject(&is_nil/1)
+  end
+end
+
+data = Pizzeria.Migrations.Seeds.run() |> Nx.tensor()
+```
+
+Let's split our data into test and train.
+
+```elixir
+{n, 2} = Nx.shape(data)
+
+train_size = round(n * 0.8)
+test_size = n - train_size
+
+# Probably a better way
+traindata = data |> Nx.slice_along_axis(0, test_size)
+testdata = data |> Nx.slice_along_axis(test_size, train_size)
+
+x = traindata[[.., 0..0]]
+y = traindata[[.., 1]]
+
+testx = testdata[[.., 0..0]]
+testy = testdata[[.., 1]]
+
+model = LR.fit(x, y)
+```
+
+### Visualize Updated Data
+
+Based on way more data, let's visualize our curve.
+
+```elixir
+df = DF.new(x: x, y: y)
+testdf = DF.new(x: testx, y: testy)
+
+[m] = Nx.to_flat_list(model.coefficients)
+[b] = Nx.to_flat_list(model.intercept)
+
+line = %{
+  x: [0, 60],
+  y: [m * 0 + b, m * 60 + b]
+}
+
+Vl.new(title: ["Pizzeria Line"], width: 630, height: 630)
+|> Vl.layers([
+  Vl.new()
+  |> Vl.data_from_values(df)
+  |> Vl.mark(:circle, size: 100, color: :green)
+  |> Vl.encode_field(:x, "x", type: :quantitative)
+  |> Vl.encode_field(:y, "y", type: :quantitative),
+  Vl.new()
+  |> Vl.data_from_values(testdf)
+  |> Vl.mark(:circle, size: 100, color: :blue)
+  |> Vl.encode_field(:x, "x", type: :quantitative)
+  |> Vl.encode_field(:y, "y", type: :quantitative),
+  Vl.new()
+  |> Vl.data_from_values(line)
+  |> Vl.mark(:line, size: 4, color: :red)
+  |> Vl.encode_field(:x, "x", type: :quantitative)
+  |> Vl.encode_field(:y, "y", type: :quantitative)
+])
+```
+
+We can then evaluate our model by measuring the error of each prediction in our test dataset.
+
+```elixir
+model
+|> LR.predict(testx)
+|> Nx.subtract(testy)
+|> Nx.abs()
+|> Nx.mean()
+```
+
+From our visual inspection, maybe a curve is better.  Let's retrain and re-evaluate our model.
+
+```elixir
+# But we need bleeding edge Scholar / Nx and it wasn't working in livebook....
+# {:nx, github: "elixir-nx/nx", sparse: "nx", override: true},
+# {:scholar, github: "elixir-nx/scholar", branch: "main"},
+
+alias Scholar.Linear.PolynomialRegression, as: PR
+model = PR.fit(x, y)
+```
+
+Let's visualize this line
+
+```elixir
+df = DF.new(x: x, y: y)
+
+traindf = DF.new(x: testx, y: testy)
+
+polyx = Enum.to_list(1..60)
+
+polyy =
+  polyx
+  |> Enum.map(&Nx.tensor([[&1]]))
+  |> Enum.map(&(PR.predict(model, &1) |> Nx.to_flat_list() |> List.first()))
+
+Vl.new(
+  title: [text: "Pizza Dough Approximation"],
+  width: 630,
+  height: 630
+)
+|> Vl.layers([
+  Vl.new()
+  |> Vl.data_from_values(df)
+  |> Vl.mark(:circle, color: :blue)
+  |> Vl.encode_field(:x, "x", type: :quantitative, axis: [grid: false])
+  |> Vl.encode_field(:y, "y", type: :quantitative, axis: [grid: false]),
+  Vl.new()
+  |> Vl.data_from_values(traindf)
+  |> Vl.mark(:square, color: :red)
+  |> Vl.encode_field(:x, "x", type: :quantitative, axis: [grid: false])
+  |> Vl.encode_field(:y, "y", type: :quantitative, axis: [grid: false]),
+  Vl.new()
+  |> Vl.data_from_values(line)
+  |> Vl.mark(:line, color: :lightgrey, weight: 1)
+  |> Vl.encode_field(:x, "x", type: :quantitative, axis: [grid: false])
+  |> Vl.encode_field(:y, "y", type: :quantitative, axis: [grid: false]),
+  Vl.new()
+  |> Vl.data_from_values(%{x: polyx, y: polyy})
+  |> Vl.mark(:line, color: :green, weight: 2)
+  |> Vl.encode_field(:x, "x", type: :quantitative, axis: [grid: false])
+  |> Vl.encode_field(:y, "y", type: :quantitative, axis: [grid: false])
+])
+```
+
+And then we can re-evaluate the model
+
+```elixir
+model
+|> PR.predict(testx)
+|> Nx.subtract(testy)
+|> Nx.abs()
+|> Nx.mean()
+```

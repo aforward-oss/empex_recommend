@@ -25,7 +25,6 @@ The tensor [arg](https://hexdocs.pm/nx/Nx.html#tensor/2) can be one of many thin
 * A tensor (why? well the `opts` we haven't talke about yet would then be used to tweak an existing tensor)
 
 ```elixir
-
 ```
 
 ## Pizzeria
