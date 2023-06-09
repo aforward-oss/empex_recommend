@@ -34,7 +34,7 @@ defmodule Gamedrop.Ml.Predictor do
           a > b
         end
       end)
-      |> Enum.take(5)
+      |> Enum.take(n)
       |> Enum.map(fn {_, i} -> Enum.fetch!(all_game_names, i) end)
     end
   end
