@@ -4,7 +4,6 @@
 # Don't forget to start pizzeria
 # iex --sname pizzeria --cookie pizzeriacookie -S mix phx.server
 
-
 alias VegaLite, as: Vl
 require Explorer.DataFrame, as: DF
 require Explorer.Series, as: S
@@ -26,6 +25,7 @@ Seeds.logarithmic()
 We have, for example 31 days of data (Jan 1 - 31).  We will split our data into a training set into two, the most often used splits are 80/20, 90/10, and 67/33.  We will pick 80/20.
 
 ```elixir
+alias Pizzeria.Ml.Engine
 traindata = Engine.dataset({~D[2023-01-01], ~D[2023-09-30]})
 testdata = Engine.dataset({~D[2023-10-01], ~D[2023-12-31]})
 ```

@@ -55,5 +55,5 @@ Worker.predict(%{"budget" => 3, "game_types" => ["Adventure", "Arcade"]})
 Or the top 5 predictions.
 
 ```elixir
-Worker.predict(%{"budget" => 3, "game_types" => ["Adventure", "Arcade"]}, 5)
+Worker.predict(%{"budget" => 1, "game_types" => ["Adventure"]}, 5)
 ```
