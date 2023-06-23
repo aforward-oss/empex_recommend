@@ -180,7 +180,7 @@ Let's split our data into test and train.
 # testx =
 # testy =
 
-model = LR.fit(x, y)
+# model = LR.fit(x, y)
 ```
 
 ### Visualize Updated Data
