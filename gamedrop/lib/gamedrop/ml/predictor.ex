@@ -1,6 +1,5 @@
 defmodule Gamedrop.Ml.Predictor do
   @filename "priv/model.nx"
-  @model_state nil
   @model_state File.read!(@filename)
                |> :erlang.binary_to_term()
                |> then(fn {model, opts} -> {Nx.deserialize(model), opts} end)
